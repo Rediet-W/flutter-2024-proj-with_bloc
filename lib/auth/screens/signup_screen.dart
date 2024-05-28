@@ -1,21 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
+import '../bloc/auth_state.dart';
 
 class SignUpPage extends StatelessWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              child: Image.asset('Assets/component.png',
-                  alignment: Alignment.center, fit: BoxFit.fill),
-            ),
-            Container(
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthLoggedIn) {
+            Navigator.pushNamed(context, '/home');
+          } else if (state is AuthError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                child: Image.asset('Assets/component.png',
+                    alignment: Alignment.center, fit: BoxFit.fill),
+              ),
+              Container(
                 margin: EdgeInsets.all(20.0),
-                // width: 500,
                 child: Column(
                   children: [
                     Text("Sign Up",
@@ -23,28 +38,29 @@ class SignUpPage extends StatelessWidget {
                             fontSize: 40.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.black)),
-                    TextField(
+                    TextFormField(
+                      controller: _usernameController,
                       decoration: InputDecoration(
                         labelText: 'Username',
                         prefixIcon: Icon(Icons.person),
                       ),
                     ),
-                    TextField(
+                    TextFormField(
+                      controller: _emailController,
                       decoration: InputDecoration(
                         labelText: 'Email',
                         prefixIcon: Icon(Icons.mail),
                       ),
                     ),
-                    TextField(
+                    TextFormField(
+                      controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         prefixIcon: Icon(Icons.lock),
                       ),
                       obscureText: true,
                     ),
-                    SizedBox(
-                      height: 16.0,
-                    ),
+                    SizedBox(height: 16.0),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, '/login');
@@ -65,15 +81,27 @@ class SignUpPage extends StatelessWidget {
                             MaterialStateProperty.all<Color>(Colors.blue),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/home');
+                        context.read<AuthBloc>().add(
+                              SignupEvent(
+                                username: _usernameController.text,
+                                email: _emailController.text,
+                                password: _passwordController.text,
+                              ),
+                            );
                       },
-                      child:
-                          Text('Submit', style: TextStyle(color: Colors.white)),
+                      child: Text(
+                        'Sign Up',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
-                )),
-            Container(child: Image.asset('Assets/component1.png'))
-          ],
+                ),
+              ),
+              Container(
+                child: Image.asset('Assets/component1.png', fit: BoxFit.fill),
+              ),
+            ],
+          ),
         ),
       ),
     );
