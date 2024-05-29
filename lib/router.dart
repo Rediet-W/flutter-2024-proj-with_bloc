@@ -50,7 +50,9 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: 'detail',
-          builder: (context, state) => ItemPage(),
+          builder: (context, state) => ItemPage(
+            postId: '',
+          ),
         ),
       ],
     ),
