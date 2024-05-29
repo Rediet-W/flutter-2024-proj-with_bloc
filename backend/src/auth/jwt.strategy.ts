@@ -8,9 +8,9 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { user } from './schemas/user.schema';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
   constructor(
-    @InjectModel(user.name)
+    @InjectModel('user')
     private userModel: Model<user & Document>, // Include Document in the type
   ) {
     super({
