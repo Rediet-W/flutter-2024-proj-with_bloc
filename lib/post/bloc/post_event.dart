@@ -21,3 +21,12 @@ class CreatePost extends PostEvent {
   @override
   List<Object?> get props => [title, description, location, time];
 }
+
+class LoadPost extends PostEvent {
+  final String postId;
+
+  LoadPost(this.postId);
+
+  @override
+  List<Object?> get props => [postId];
+}

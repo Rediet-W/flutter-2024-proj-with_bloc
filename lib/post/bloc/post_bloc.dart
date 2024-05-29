@@ -8,6 +8,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
 
   PostBloc({required this.postRepository}) : super(PostInitial()) {
     on<CreatePost>(_onCreatePost);
+    on<LoadPost>(_onLoadPost);
   }
 
   void _onCreatePost(CreatePost event, Emitter<PostState> emit) async {
@@ -22,6 +23,16 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       emit(PostSuccess());
     } catch (e) {
       emit(PostFailure(error: e.toString()));
+    }
+  }
+
+  void _onLoadPost(LoadPost event, Emitter<PostState> emit) async {
+    emit(PostLoadingDetails());
+    try {
+      final postDetails = await postRepository.fetchPostDetails(event.postId);
+      emit(PostLoaded(postDetails));
+    } catch (e) {
+      emit(PostLoadingDetailsError(error: e.toString()));
     }
   }
 }

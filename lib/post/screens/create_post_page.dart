@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../bloc/post_bloc.dart';
 import '../bloc/post_event.dart';
 import '../bloc/post_state.dart';
@@ -29,7 +30,7 @@ class _NewPostState extends State<NewPost> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Post created successfully!')),
             );
-            Navigator.pop(context);
+            context.pop();
           } else if (state is PostFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error)),

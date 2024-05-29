@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class ProfileTwo extends StatefulWidget {
   const ProfileTwo({Key? key}) : super(key: key);
 
@@ -23,50 +22,52 @@ class _ProfileTwoState extends State<ProfileTwo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.blue[300],
-        title: Center(child: Text('your Profile',style: TextStyle(color: Colors.white),),),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-        padding: const EdgeInsets.all(30),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const CircleAvatar(
-                radius: 100.0,
-                child: Icon(
-                  Icons.account_circle,
-                  size: 200,
-                  
-                ),
-              ),
-              const Divider(
-                height: 60,
-                color: Colors.black,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buildProfileField("Name", _name, _isNameEnabled),
-                  buildProfileField(
-                      "Phone number", _controller, _isPhoneEnabled),
-                  buildProfileField("Email", _email, _isEmailEnabled),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-            
-            ],
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.blue[300],
+          title: const Center(
+            child: Text(
+              'your Profile',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
-      ),
-      )
-    );
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(30),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircleAvatar(
+                    radius: 100.0,
+                    child: Icon(
+                      Icons.account_circle,
+                      size: 200,
+                    ),
+                  ),
+                  const Divider(
+                    height: 60,
+                    color: Colors.black,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buildProfileField("Name", _name, _isNameEnabled),
+                      buildProfileField(
+                          "Phone number", _controller, _isPhoneEnabled),
+                      buildProfileField("Email", _email, _isEmailEnabled),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 
   Widget buildProfileField(

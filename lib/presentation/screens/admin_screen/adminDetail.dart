@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class AdminItemPage extends StatelessWidget {
   @override
@@ -9,8 +10,8 @@ class AdminItemPage extends StatelessWidget {
         backgroundColor: Colors.blue[300],
         actions: [
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-            child: Text(
+            margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+            child: const Text(
               'Item',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -22,12 +23,13 @@ class AdminItemPage extends StatelessWidget {
         ],
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            context.pop();
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
           ),
-          style: ButtonStyle(iconColor: MaterialStatePropertyAll(Colors.white)),
+          style: const ButtonStyle(
+              iconColor: MaterialStatePropertyAll(Colors.white)),
         ),
       ),
       body: Center(
@@ -48,7 +50,7 @@ class AdminItemPage extends StatelessWidget {
                   child: Container(
                     width: 300,
                     height: 300,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                     ),
                     child: Image.asset(
@@ -65,7 +67,7 @@ class AdminItemPage extends StatelessWidget {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Center(
+                          const Center(
                             child: Text(
                               'Item name',
                               style: TextStyle(
@@ -74,7 +76,7 @@ class AdminItemPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Row(
@@ -113,7 +115,7 @@ class AdminItemPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 padding: const EdgeInsets.all(16),
-                                margin: EdgeInsets.all(10),
+                                margin: const EdgeInsets.all(10),
                                 child: const Column(
                                   children: [
                                     Text(
@@ -131,11 +133,11 @@ class AdminItemPage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Container(
-                            child: Text(
+                            child: const Text(
                               'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sed purus in sapien tempor pulvinar. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nullam molestie, nulla sed scelerisque pharetra, nisi quam fringilla odio, vel porta mauris velit a dolor. Integer nec arcu non elit consequat semper. Sed eui',
                               style: TextStyle(
                                 overflow: TextOverflow.visible,
@@ -153,7 +155,6 @@ class AdminItemPage extends StatelessWidget {
                                       onPressed: () {
                                         // Delete button action
                                       },
-                                      child: Text('Delete'),
                                       style: ButtonStyle(
                                         backgroundColor:
                                             MaterialStateProperty.all<Color>(
@@ -161,7 +162,7 @@ class AdminItemPage extends StatelessWidget {
                                         side: MaterialStateProperty.resolveWith<
                                             BorderSide>(
                                           (Set<MaterialState> states) {
-                                            return BorderSide(
+                                            return const BorderSide(
                                               color: Colors.blue,
                                               width:
                                                   2, // Adjust border width as needed
@@ -169,15 +170,16 @@ class AdminItemPage extends StatelessWidget {
                                           },
                                         ),
                                       ),
+                                      child: const Text('Delete'),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                         width:
                                             10), // Add spacing between buttons
                                     ElevatedButton(
                                       onPressed: () {
                                         // Edit button action
                                       },
-                                      child: Text('Edit'),
+                                      child: const Text('Edit'),
                                       style: ButtonStyle(
                                         backgroundColor:
                                             MaterialStateProperty.all<Color>(
@@ -185,7 +187,7 @@ class AdminItemPage extends StatelessWidget {
                                         side: MaterialStateProperty.resolveWith<
                                             BorderSide>(
                                           (Set<MaterialState> states) {
-                                            return BorderSide(
+                                            return const BorderSide(
                                               color: Colors.white,
                                               width:
                                                   2, // Adjust border width as needed
@@ -199,16 +201,16 @@ class AdminItemPage extends StatelessWidget {
                                 // Add spacing between buttons and comment button
                                 IconButton(
                                   onPressed: () {
-                                    Navigator.pushNamed(context, '/comment');
+                                    context.go('/comment');
                                   },
-                                  icon: Icon(Icons.comment),
+                                  icon: const Icon(Icons.comment),
                                   style: ButtonStyle(
                                     iconColor:
                                         MaterialStateProperty.all(Colors.blue),
                                     side: MaterialStateProperty.resolveWith<
                                         BorderSide>(
                                       (Set<MaterialState> states) {
-                                        return BorderSide(
+                                        return const BorderSide(
                                           color: Colors.white,
                                           width: 2,
                                         );

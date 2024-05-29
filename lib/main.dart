@@ -2,19 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_project/post/bloc/post_bloc.dart';
 import 'package:flutter_project/post/repository/post_repository.dart';
-import 'package:flutter_project/post/screens/create_post_page.dart';
-import 'package:flutter_project/presentation/screens/detailpage.dart';
-import 'package:flutter_project/presentation/screens/noaccount.dart';
-import 'package:flutter_project/presentation/screens/profile.dart';
-import 'package:flutter_project/presentation/screens/withaccount.dart';
-import 'package:flutter_project/presentation/widgets/nav.dart';
+import 'package:flutter_project/router.dart';
 import 'auth/repository/auth_repository.dart';
 import 'auth/bloc/auth_bloc.dart';
-import 'auth/screens/login_screen.dart';
-import 'auth/screens/signup_screen.dart';
 import 'comment/repository/comment_repository.dart';
 import 'comment/bloc/comment_bloc.dart';
-import 'comment/screens/comment_page.dart';
 
 void main() {
   final AuthRepository authRepository = AuthRepository();
@@ -35,10 +27,11 @@ class MyApp extends StatelessWidget {
   final CommentRepository commentRepository;
   final PostRepository postRepository;
 
-  MyApp(
-      {required this.authRepository,
-      required this.commentRepository,
-      required this.postRepository});
+  MyApp({
+    required this.authRepository,
+    required this.commentRepository,
+    required this.postRepository,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -69,23 +62,12 @@ class MyApp extends StatelessWidget {
                 PostBloc(postRepository: context.read<PostRepository>()),
           ),
         ],
-        child: MaterialApp(
+        child: MaterialApp.router(
+          routerConfig: router, // Use the GoRouter configuration
           title: 'Flutter Demo',
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          initialRoute: '/login',
-          routes: {
-            '/login': (context) => LogInPage(),
-            '/signup': (context) => SignUpPage(),
-            '/comment': (context) => CommentPage(postId: 'postId'),
-            '/home': (context) => HomeScreen(),
-            '/newpost': (context) => NewPost(),
-            '/noaccount': (context) => NoAccount(),
-            '/withaccount': (context) => WithAccount(),
-            '/profile': (context) => ProfileTwo(),
-            '/detail': (context) => ItemPage(),
-          },
         ),
       ),
     );

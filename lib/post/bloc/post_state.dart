@@ -19,3 +19,23 @@ class PostFailure extends PostState {
   @override
   List<Object?> get props => [error];
 }
+
+class PostLoaded extends PostState {
+  final Map<String, dynamic> postDetails;
+
+  PostLoaded(this.postDetails);
+
+  @override
+  List<Object?> get props => [postDetails];
+}
+
+class PostLoadingDetails extends PostState {}
+
+class PostLoadingDetailsError extends PostState {
+  final String error;
+
+  PostLoadingDetailsError({required this.error});
+
+  @override
+  List<Object?> get props => [error];
+}

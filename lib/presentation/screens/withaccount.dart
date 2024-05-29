@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class WithAccount extends StatelessWidget {
   final List<Item> items = [
@@ -67,7 +68,7 @@ class WithAccount extends StatelessWidget {
         ],
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            context.pop();
           },
           icon: Icon(
             Icons.arrow_back,
@@ -108,7 +109,7 @@ class GridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/detail');
+        context.go('/detail');
       },
       child: Card(
         child: Column(
@@ -141,7 +142,7 @@ class GridItem extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/comment');
+                    context.go('/comment');
                   },
                   child: Icon(Icons.comment),
                   style: ButtonStyle(

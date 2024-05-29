@@ -28,4 +28,15 @@ class PostRepository {
       throw Exception('Failed to create post');
     }
   }
+
+  Future<Map<String, dynamic>> fetchPostDetails(String postId) async {
+    final url = Uri.parse('$baseUrl/posts/$postId');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load post details');
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class AdminCommentPage extends StatefulWidget {
   @override
@@ -39,9 +40,9 @@ class _AdminCommentPageState extends State<AdminCommentPage> {
                   data[index]['name']!,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Spacer(),
+                const Spacer(),
                 IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                   onPressed: () {
                     setState(() {
                       filedata.removeAt(index);
@@ -64,22 +65,34 @@ class _AdminCommentPageState extends State<AdminCommentPage> {
         backgroundColor: Colors.blue[300],
         actions: [
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-            child: Text('comments',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 19,color: Colors.white,letterSpacing: 1.3),) ,
-
+            margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+            child: const Text(
+              'comments',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 19,
+                  color: Colors.white,
+                  letterSpacing: 1.3),
+            ),
           )
-        
         ],
-        leading: IconButton(onPressed: (){
-          Navigator.pop(context);
-        }, icon: Icon(Icons.arrow_back,),style: ButtonStyle(iconColor: MaterialStatePropertyAll(Colors.white)),),
+        leading: IconButton(
+          onPressed: () {
+            context.pop();
+          },
+          icon: const Icon(
+            Icons.arrow_back,
+          ),
+          style: const ButtonStyle(
+              iconColor: MaterialStatePropertyAll(Colors.white)),
+        ),
       ),
       body: Column(
         children: [
           Expanded(
             child: commentChild(filedata),
           ),
-          Divider(),
+          const Divider(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: CustomCommentField(
@@ -129,12 +142,13 @@ class _CustomCommentFieldState extends State<CustomCommentField> {
             controller: commentController,
             decoration: InputDecoration(
               labelText: widget.labelText,
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
           ),
         ),
         IconButton(
-          icon: Icon(Icons.send, color: Colors.blue), // Set icon color to blue
+          icon: const Icon(Icons.send,
+              color: Colors.blue), // Set icon color to blue
           onPressed: () {
             if (commentController.text.trim().isNotEmpty) {
               widget.sendButtonMethod(commentController.text);

@@ -1,7 +1,7 @@
-
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class NoAccount extends StatelessWidget {
   final List<Item> items = [
@@ -36,52 +36,39 @@ class NoAccount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         backgroundColor: Colors.blue[100],
-        appBar: AppBar(
-        backgroundColor: Colors.blue[300],
-        actions: [
-
+        appBar: AppBar(backgroundColor: Colors.blue[300], actions: [
           // *********************    navigation to the login page here
-            TextButton(
-              onPressed: (){
-                Navigator.pushNamed(context, '/login');
-                
+          TextButton(
+              onPressed: () {
+                context.go('/login');
               },
-              child:
-                Container(
-
-
-                  margin: EdgeInsets.symmetric(horizontal: 17),
-                  child: Text(
-                    'Log In',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                        letterSpacing: 1.3),
-                  ),
-                ))
-
-        ]
-      ),
-        body: Padding(padding: EdgeInsets.all(10),
-        
-        child: GridView.count(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 33,
-          children: List.generate(items.length, (index) {
-            return GridItem(
-              item: items[index],
-
-            );
-          }),
-        ),)
-      );
-
-
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 17),
+                child: Text(
+                  'Log In',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                      letterSpacing: 1.3),
+                ),
+              ))
+        ]),
+        body: Padding(
+          padding: EdgeInsets.all(10),
+          child: GridView.count(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 33,
+            children: List.generate(items.length, (index) {
+              return GridItem(
+                item: items[index],
+              );
+            }),
+          ),
+        ));
   }
 }
 
@@ -107,7 +94,6 @@ class GridItem extends StatelessWidget {
         children: [
           SizedBox(height: 7),
           Expanded(
-            
             child: Image.network(
               item.imageUrl,
               fit: BoxFit.contain,
@@ -116,13 +102,21 @@ class GridItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              IconButton(onPressed: () {
-                Navigator.pushNamed(context, '/login');
-              }, icon: Icon(Icons.read_more),style: ButtonStyle(iconColor: MaterialStatePropertyAll(Colors.blue)),),
-
-              IconButton(onPressed: () {
-                Navigator.pushNamed(context, '/login');
-              }, icon: Icon(Icons.comment),style: ButtonStyle(iconColor: MaterialStatePropertyAll(Colors.blue)))
+              IconButton(
+                onPressed: () {
+                  context.go('/login');
+                },
+                icon: Icon(Icons.read_more),
+                style: ButtonStyle(
+                    iconColor: MaterialStatePropertyAll(Colors.blue)),
+              ),
+              IconButton(
+                  onPressed: () {
+                    context.go('/login');
+                  },
+                  icon: Icon(Icons.comment),
+                  style: ButtonStyle(
+                      iconColor: MaterialStatePropertyAll(Colors.blue)))
             ],
           ),
         ],
@@ -130,6 +124,3 @@ class GridItem extends StatelessWidget {
     );
   }
 }
-
-
-

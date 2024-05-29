@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -14,42 +15,42 @@ class SignUpPage extends StatelessWidget {
                   alignment: Alignment.center, fit: BoxFit.fill),
             ),
             Container(
-                margin: EdgeInsets.all(20.0),
+                margin: const EdgeInsets.all(20.0),
                 // width: 500,
                 child: Column(
                   children: [
-                    Text("Sign Up",
+                    const Text("Sign Up",
                         style: TextStyle(
                             fontSize: 40.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.black)),
-                    TextField(
+                    const TextField(
                       decoration: InputDecoration(
                         labelText: 'Username',
                         prefixIcon: Icon(Icons.person),
                       ),
                     ),
-                    TextField(
+                    const TextField(
                       decoration: InputDecoration(
                         labelText: 'Email',
                         prefixIcon: Icon(Icons.mail),
                       ),
                     ),
-                    TextField(
+                    const TextField(
                       decoration: InputDecoration(
                         labelText: 'Password',
                         prefixIcon: Icon(Icons.lock),
                       ),
                       obscureText: true,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 16.0,
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/login');
+                        context.go('/login');
                       },
-                      child: Text(
+                      child: const Text(
                         'I already have an account',
                         textAlign: TextAlign.start,
                         style: TextStyle(
@@ -58,7 +59,7 @@ class SignUpPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor:
@@ -67,8 +68,8 @@ class SignUpPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.pushNamed(context, '/home');
                       },
-                      child:
-                          Text('Submit', style: TextStyle(color: Colors.white)),
+                      child: const Text('Submit',
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 )),
