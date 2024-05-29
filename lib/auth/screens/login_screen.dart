@@ -56,7 +56,7 @@ class LogInPage extends StatelessWidget {
                     const SizedBox(height: 16.0),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/signup');
+                        context.go('/signup');
                       },
                       child: const Text(
                         'I do not have an account',
