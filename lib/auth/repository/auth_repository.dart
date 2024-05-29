@@ -10,7 +10,7 @@ class AuthRepository {
   // log in
   Future<User> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/user'),
+      Uri.parse('$baseUrl/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

@@ -34,7 +34,7 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: 'newpost',
-          builder: (context, state) => NewPost(),
+          builder: (context, state) => CreatePostPage(),
         ),
         GoRoute(
           path: 'noaccount',
@@ -48,12 +48,12 @@ final GoRouter router = GoRouter(
           path: 'profile',
           builder: (context, state) => ProfileTwo(),
         ),
-        GoRoute(
-          path: 'detail',
-          builder: (context, state) => ItemPage(
-            postId: '',
-          ),
-        ),
+        // GoRoute(
+        //   path: 'detail',
+        //   builder: (context, state) => ItemPage(
+        //     postId: '',
+        //   ),
+        // ),
       ],
     ),
   ],

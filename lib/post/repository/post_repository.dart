@@ -16,7 +16,7 @@ class PostRepository {
     required String location,
     required String time,
   }) async {
-    final url = Uri.parse('$baseUrl/posts');
+    final url = Uri.parse('$baseUrl/items');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -34,7 +34,7 @@ class PostRepository {
   }
 
   Future<Map<String, dynamic>> fetchPostDetails(String postId) async {
-    final url = Uri.parse('$baseUrl/posts/$postId');
+    final url = Uri.parse('$baseUrl/items/$postId');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -44,17 +44,11 @@ class PostRepository {
     }
   }
 
-  Future<List<Post>> fetchItems() async {
-    final token = await _secureStorageService.readToken();
-    if (token == null) {
-      throw Exception('No token found');
-    }
-
+  Future<List<Post>> fetchPosts() async {
     final response = await http.get(
-      Uri.parse(baseUrl),
+      Uri.parse('http://localhost:3003/items'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
       },
     );
 
@@ -62,7 +56,7 @@ class PostRepository {
       final List<dynamic> data = json.decode(response.body);
       return data.map((item) => Post.fromJson(item)).toList();
     } else {
-      throw Exception('Failed to load items');
+      throw Exception('Failed to load posts');
     }
   }
 }

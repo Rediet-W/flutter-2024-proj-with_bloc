@@ -13,7 +13,7 @@ void main() {
   final CommentRepository commentRepository =
       CommentRepository(baseUrl: 'http://10.0.2.2:3003/');
   final PostRepository postRepository =
-      PostRepository(baseUrl: 'http://10.0.2.2:3003/');
+      PostRepository(baseUrl: 'http://localhost:3003/');
 
   runApp(MyApp(
     authRepository: authRepository,

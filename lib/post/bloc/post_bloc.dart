@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'post_event.dart';
 import 'post_state.dart';
 import '../repository/post_repository.dart';
+import '../model/post.dart';
 
 class PostBloc extends Bloc<PostEvent, PostState> {
   final PostRepository postRepository;
@@ -27,10 +28,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   }
 
   void _onLoadPost(LoadPost event, Emitter<PostState> emit) async {
-    emit(PostLoadingDetails());
+    emit(PostLoading());
     try {
-      final postDetails = await postRepository.fetchPostDetails(event.postId);
-      emit(PostLoaded(postDetails));
+      final List<Post> posts = await postRepository
+          .fetchPosts(); // Assuming fetchPosts returns a List<Post>
+      emit(PostLoaded(posts));
     } catch (e) {
       emit(PostLoadingDetailsError(error: e.toString()));
     }

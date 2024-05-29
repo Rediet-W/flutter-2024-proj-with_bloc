@@ -1,11 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../post/bloc/post_bloc.dart';
-import '../../../post/bloc/post_event.dart';
-import '../../../post/bloc/post_state.dart';
-import '../../../post/repository/post_repository.dart';
-import '../../post/model/post.dart';
+import 'package:flutter_project/post/bloc/post_bloc.dart';
+import 'package:flutter_project/post/bloc/post_event.dart';
+import 'package:flutter_project/post/bloc/post_state.dart';
+import 'package:flutter_project/post/repository/post_repository.dart';
+import 'package:flutter_project/post/model/post.dart';
 
 class NoAccount extends StatelessWidget {
   @override
@@ -44,7 +46,7 @@ class NoAccount extends StatelessWidget {
               return Center(child: CircularProgressIndicator());
             } else if (state is PostLoadingDetailsError) {
               return Center(
-                  child: Text('Failed to load items: ${state.error}'));
+                  child: Text('Failed to load posts: ${state.error}'));
             } else if (state is PostLoaded) {
               return Padding(
                 padding: EdgeInsets.all(10),
@@ -53,8 +55,9 @@ class NoAccount extends StatelessWidget {
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 33,
                   children: List.generate(state.posts.length, (index) {
+                    final post = state.posts[index];
                     return GridItem(
-                      post: state.posts[index],
+                      post: post,
                     );
                   }),
                 ),
@@ -75,6 +78,9 @@ class GridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Uint8List? imageData =
+        post.imageBuffer != null ? Uint8List.fromList(post.imageBuffer!) : null;
+
     return Card(
       color: Colors.white,
       child: Column(
@@ -84,10 +90,17 @@ class GridItem extends StatelessWidget {
         children: [
           SizedBox(height: 7),
           Expanded(
-            child: Image.network(
-              post.imageUrl,
-              fit: BoxFit.contain,
-            ),
+            child: imageData != null
+                ? Image.memory(
+                    imageData,
+                    fit: BoxFit.contain,
+                  )
+                : Container(
+                    color: Colors.grey, // Placeholder or default image
+                    child: Center(
+                      child: Text('No Image'),
+                    ),
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
