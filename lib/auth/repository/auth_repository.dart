@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_project/auth/model/user.dart';
+import '../../secure_storage_service.dart'; // Make sure to import the SecureStorageService
 
 class AuthRepository {
   final String baseUrl = 'http://localhost:3003/auth';
-  String? _token;
+  final SecureStorageService _secureStorageService = SecureStorageService();
 
   // log in
   Future<User> login(String email, String password) async {
@@ -21,7 +22,7 @@ class AuthRepository {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      _token = data['token'];
+      await _secureStorageService.writeToken(data['token']);
       return User(
           id: data['id'], email: data['email'], username: data['username']);
     } else {
@@ -44,7 +45,7 @@ class AuthRepository {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      _token = data['token'];
+      await _secureStorageService.writeToken(data['token']);
       return User(
           id: data['id'], email: data['email'], username: data['username']);
     } else {
@@ -53,7 +54,8 @@ class AuthRepository {
   }
 
   Future<void> logout() async {
-    if (_token == null) {
+    final token = await _secureStorageService.readToken();
+    if (token == null) {
       throw Exception('No token found, please log in first');
     }
 
@@ -61,27 +63,34 @@ class AuthRepository {
       Uri.parse('$baseUrl/logout'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $_token',
+        'Authorization': 'Bearer $token',
       },
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      await _secureStorageService.deleteToken();
+    } else {
       throw Exception('Failed to log out');
     }
   }
 
-  // Example of another authenticated request
-  Future<User> getUserDetails() async {
-    if (_token == null) {
+  // Method to get headers with token
+  Future<Map<String, String>> _getHeaders() async {
+    final token = await _secureStorageService.readToken();
+    if (token == null) {
       throw Exception('No token found, please log in first');
     }
+    return {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $token',
+    };
+  }
 
+  // Example of another authenticated request
+  Future<User> getUserDetails() async {
     final response = await http.get(
       Uri.parse('$baseUrl/user/details'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $_token',
-      },
+      headers: await _getHeaders(),
     );
 
     if (response.statusCode == 200) {
