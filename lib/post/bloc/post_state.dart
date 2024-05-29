@@ -1,6 +1,9 @@
 import 'package:equatable/equatable.dart';
+import '../model/post.dart'; // Import your Post model
 
 abstract class PostState extends Equatable {
+  const PostState();
+
   @override
   List<Object?> get props => [];
 }
@@ -14,19 +17,19 @@ class PostSuccess extends PostState {}
 class PostFailure extends PostState {
   final String error;
 
-  PostFailure({required this.error});
+  const PostFailure({required this.error});
 
   @override
   List<Object?> get props => [error];
 }
 
 class PostLoaded extends PostState {
-  final Map<String, dynamic> postDetails;
+  final List<Post> posts; // Define posts as a list of Post objects
 
-  PostLoaded(this.postDetails);
+  const PostLoaded(this.posts);
 
   @override
-  List<Object?> get props => [postDetails];
+  List<Object?> get props => [posts];
 }
 
 class PostLoadingDetails extends PostState {}
@@ -34,7 +37,7 @@ class PostLoadingDetails extends PostState {}
 class PostLoadingDetailsError extends PostState {
   final String error;
 
-  PostLoadingDetailsError({required this.error});
+  const PostLoadingDetailsError({required this.error});
 
   @override
   List<Object?> get props => [error];
