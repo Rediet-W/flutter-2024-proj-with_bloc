@@ -9,6 +9,8 @@ import 'package:flutter_project/presentation/screens/noaccount.dart';
 import 'package:flutter_project/presentation/screens/profile.dart';
 import 'package:flutter_project/presentation/screens/withaccount.dart';
 import 'package:flutter_project/presentation/widgets/nav.dart';
+import 'package:flutter_project/presentation/screens/admin_screen/comment_admin.dart';
+import 'package:flutter_project/presentation/screens/admin_screen/adminDetail.dart';
 
 final GoRouter router = GoRouter(
   routes: <RouteBase>[
@@ -31,6 +33,14 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: 'home',
           builder: (context, state) => HomeScreen(),
+        ),
+        GoRoute(
+          path: 'admin',
+          builder: (context, state) => AdminItemPage(),
+        ),
+        GoRoute(
+          path: 'admin_comment',
+          builder: (context, state) => AdminCommentPage(),
         ),
         GoRoute(
           path: 'newpost',

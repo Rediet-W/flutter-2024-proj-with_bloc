@@ -1,157 +1,143 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_project/post/bloc/post_bloc.dart';
+import 'package:flutter_project/post/bloc/post_event.dart';
+import 'package:flutter_project/post/bloc/post_state.dart';
+import 'package:flutter_project/post/repository/post_repository.dart';
+import 'package:flutter_project/post/model/post.dart';
 
 class WithAccount extends StatelessWidget {
-  final List<Item> items = [
-    Item(
-      imageUrl: 'https://www.jumio.com/app/uploads/2020/10/ID-US.png',
-      description:
-          'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-    ),
-    Item(
-      imageUrl:
-          'https://th.bing.com/th/id/R.a23d6376839899eba3d7648990f34d8a?rik=HEsuS6DJXHM%2bCg&riu=http%3a%2f%2fpngimg.com%2fuploads%2fkey%2fkey_PNG3378.png&ehk=Yu1s6FCMs9b5wv6I7JEhKSZmG0pzUInKvt17AOaXohQ%3d&risl=1&pid=ImgRaw&r=0',
-      description:
-          'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-    ),
-    Item(
-      imageUrl:
-          'https://th.bing.com/th/id/R.a23d6376839899eba3d7648990f34d8a?rik=HEsuS6DJXHM%2bCg&riu=http%3a%2f%2fpngimg.com%2fuploads%2fkey%2fkey_PNG3378.png&ehk=Yu1s6FCMs9b5wv6I7JEhKSZmG0pzUInKvt17AOaXohQ%3d&risl=1&pid=ImgRaw&r=0',
-      description:
-          'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-    ),
-    Item(
-      imageUrl:
-          'https://th.bing.com/th/id/OIP.3l2nfzcHhMemSZooiH3B3AHaFj?rs=1&pid=ImgDetMain',
-      description:
-          'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-    ),
-    Item(
-      imageUrl: 'https://www.jumio.com/app/uploads/2020/10/ID-US.png',
-      description:
-          'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-    ),
-    Item(
-      imageUrl:
-          'https://th.bing.com/th/id/R.a23d6376839899eba3d7648990f34d8a?rik=HEsuS6DJXHM%2bCg&riu=http%3a%2f%2fpngimg.com%2fuploads%2fkey%2fkey_PNG3378.png&ehk=Yu1s6FCMs9b5wv6I7JEhKSZmG0pzUInKvt17AOaXohQ%3d&risl=1&pid=ImgRaw&r=0',
-      description:
-          'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-    ),
-    Item(
-      imageUrl:
-          'https://th.bing.com/th/id/R.a23d6376839899eba3d7648990f34d8a?rik=HEsuS6DJXHM%2bCg&riu=http%3a%2f%2fpngimg.com%2fuploads%2fkey%2fkey_PNG3378.png&ehk=Yu1s6FCMs9b5wv6I7JEhKSZmG0pzUInKvt17AOaXohQ%3d&risl=1&pid=ImgRaw&r=0',
-      description:
-          'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue[100],
-      appBar: AppBar(
-        backgroundColor: Colors.blue[300],
-        actions: [
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-            child: Text(
-              'Home',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 19,
-                  color: Colors.white,
-                  letterSpacing: 1.3),
+    return BlocProvider(
+      create: (context) => PostBloc(
+        postRepository: PostRepository(baseUrl: 'http://localhost:3003/'),
+      )..add(LoadPost('')), // Ensure LoadPost event is correct
+      child: Scaffold(
+        backgroundColor: Colors.blue[100],
+        appBar: AppBar(
+          backgroundColor: Colors.blue[300],
+          actions: [
+            TextButton(
+              onPressed: () {
+                context.go('/login');
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 17),
+                child: Text(
+                  'Log In',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                    letterSpacing: 1.3,
+                  ),
+                ),
+              ),
             ),
-          )
-        ],
-        leading: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: Icon(
-            Icons.arrow_back,
-          ),
-          style: ButtonStyle(iconColor: MaterialStatePropertyAll(Colors.white)),
+          ],
         ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(15),
-        child: GridView.count(
-          crossAxisCount: 1,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 30,
-          children: List.generate(items.length, (index) {
-            return GridItem(
-              item: items[index],
-            );
-          }),
+        body: BlocBuilder<PostBloc, PostState>(
+          builder: (context, state) {
+            if (state is PostLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is PostLoadingDetailsError) {
+              return Center(
+                  child: Text('Failed to load posts: ${state.error}'));
+            } else if (state is PostLoaded) {
+              return Padding(
+                padding: EdgeInsets.all(10),
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 33,
+                  children: List.generate(state.posts.length, (index) {
+                    final post = state.posts[index];
+                    return GridItem(
+                      post: post,
+                    );
+                  }),
+                ),
+              );
+            } else if (state is PostLoading ||
+                state is PostLoadingDetailsError) {
+              return Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            } else {
+              return Scaffold(
+                body: Center(
+                  child: Text('Failed to load posts'),
+                ),
+              );
+            }
+          },
         ),
       ),
     );
   }
 }
 
-class Item {
-  final String imageUrl;
-  final String description;
-
-  Item({required this.imageUrl, required this.description});
-}
-
 class GridItem extends StatelessWidget {
-  final Item item;
+  final Post post;
 
-  GridItem({required this.item});
+  GridItem({required this.post});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        context.go('/detail');
-      },
-      child: Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(
-              height: 1,
-            ),
-            Expanded(
-              child: Image.network(
-                item.imageUrl,
-                fit: BoxFit.cover,
+    Uint8List? imageData =
+        post.imageBuffer != null ? Uint8List.fromList(post.imageBuffer!) : null;
+
+    return Card(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: 7),
+          Expanded(
+            child: imageData != null
+                ? Image.memory(
+                    imageData,
+                    fit: BoxFit.contain,
+                  )
+                : Container(
+                    color: Colors.grey, // Placeholder or default image
+                    child: Center(
+                      child: Text('No Image'),
+                    ),
+                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(post.description),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                onPressed: () {
+                  context.go('/details'); // Changed from '/login'
+                },
+                icon: Icon(Icons.read_more), // Changed from Icons.more_vert
+                color: Colors.blue,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                item.description,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              IconButton(
+                onPressed: () {
+                  context.go('/comments'); // Changed from '/login'
+                },
+                icon: Icon(Icons.comment), // Changed from Icons.comment_rounded
+                color: Colors.blue,
               ),
-            ),
-            SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    context.go('/comment');
-                  },
-                  child: Icon(Icons.comment),
-                  style: ButtonStyle(
-                      iconColor: MaterialStatePropertyAll(Colors.blue)),
-                ),
-              ],
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }

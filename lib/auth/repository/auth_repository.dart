@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_project/auth/model/user.dart';
-import '../../secure_storage_service.dart'; // Make sure to import the SecureStorageService
+import '../model/user.dart';
+import '../../secure_storage_service.dart';
 
 class AuthRepository {
   final String baseUrl = 'http://localhost:3003/auth';
   final SecureStorageService _secureStorageService = SecureStorageService();
 
-  // log in
   Future<User> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/login'),
@@ -20,13 +19,27 @@ class AuthRepository {
       }),
     );
 
-    if (response.statusCode == 200) {
+    print('Login response status: ${response.statusCode}');
+    print('Login response body: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      await _secureStorageService.writeToken(data['token']);
+      final token = data['token'];
+      final roles = List<String>.from(data['roles'] ?? []);
+      if (token == null || roles.isEmpty) {
+        throw Exception('Token or roles missing in response');
+      }
+      await _secureStorageService.writeTokenAndRoles(token, roles);
+
       return User(
-          id: data['id'], email: data['email'], username: data['username']);
+        id: data['id'] ?? '', // Provide default values if null
+        email: data['email'] ?? '',
+        username: data['username'] ?? '',
+        roles: roles,
+      );
     } else {
-      throw Exception('Failed to log in');
+      throw Exception(
+          'Failed to log in: ${response.statusCode} ${response.reasonPhrase}');
     }
   }
 
@@ -43,13 +56,27 @@ class AuthRepository {
       }),
     );
 
-    if (response.statusCode == 200) {
+    print('Signup response status: ${response.statusCode}');
+    print('Signup response body: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      await _secureStorageService.writeToken(data['token']);
+      final token = data['token'];
+      final roles = List<String>.from(data['roles'] ?? []);
+      if (token == null || roles.isEmpty) {
+        throw Exception('Token or roles missing in response');
+      }
+      await _secureStorageService.writeTokenAndRoles(token, roles);
+
       return User(
-          id: data['id'], email: data['email'], username: data['username']);
+        id: data['id'] ?? '', // Provide default values if null
+        email: data['email'] ?? '',
+        username: data['username'] ?? '',
+        roles: roles,
+      );
     } else {
-      throw Exception('Failed to sign up');
+      throw Exception(
+          'Failed to sign up: ${response.statusCode} ${response.reasonPhrase}');
     }
   }
 
@@ -67,38 +94,14 @@ class AuthRepository {
       },
     );
 
-    if (response.statusCode == 200) {
-      await _secureStorageService.deleteToken();
+    print('Logout response status: ${response.statusCode}');
+    print('Logout response body: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      await _secureStorageService.deleteTokenAndRoles();
     } else {
-      throw Exception('Failed to log out');
-    }
-  }
-
-  // Method to get headers with token
-  Future<Map<String, String>> _getHeaders() async {
-    final token = await _secureStorageService.readToken();
-    if (token == null) {
-      throw Exception('No token found, please log in first');
-    }
-    return {
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $token',
-    };
-  }
-
-  // Example of another authenticated request
-  Future<User> getUserDetails() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/user/details'),
-      headers: await _getHeaders(),
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return User(
-          id: data['id'], email: data['email'], username: data['username']);
-    } else {
-      throw Exception('Failed to fetch user details');
+      throw Exception(
+          'Failed to log out: ${response.statusCode} ${response.reasonPhrase}');
     }
   }
 }
