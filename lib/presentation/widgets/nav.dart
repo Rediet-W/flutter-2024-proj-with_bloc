@@ -12,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int myindex = 0;
-  List<Widget> widgetList = [WithAccount(), CreatePostPage(), ProfileTwo()];
+  List<Widget> widgetList = [WithAccount(), LostFoundForm(), ProfileTwo()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(

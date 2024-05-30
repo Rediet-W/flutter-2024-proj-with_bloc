@@ -44,7 +44,7 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: 'newpost',
-          builder: (context, state) => CreatePostPage(),
+          builder: (context, state) => LostFoundForm(),
         ),
         GoRoute(
           path: 'noaccount',

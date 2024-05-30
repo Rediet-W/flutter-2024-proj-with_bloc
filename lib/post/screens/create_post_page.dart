@@ -1,36 +1,106 @@
-// create_post_page.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_project/post/bloc/post_bloc.dart';
-import 'package:flutter_project/post/bloc/post_state.dart';
 
-class CreatePostPage extends StatelessWidget {
+class LostFoundForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Create Post'),
-      ),
-      body: BlocConsumer<PostBloc, PostState>(
-        listener: (context, state) {
-          if (state is PostSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Post created successfully!')),
-            );
-          } else if (state is PostFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed to create post')),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is PostLoading) {
-            return Center(child: CircularProgressIndicator());
-          }
-          // Your form or other UI components here
-          return Container();
-        },
-      ),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.blue[300],
+          title: Center(
+            child: Text(
+              'create post',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(27),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  height: 44,
+                  child: TextFormField(
+                    maxLines: 2,
+                    decoration: InputDecoration(
+                      labelText: 'Location',
+                      labelStyle: TextStyle(color: Colors.black45),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      fillColor: Colors.grey[900],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                Container(
+                  height: 44,
+                  child: TextFormField(
+                    maxLines: 2,
+                    decoration: InputDecoration(
+                      labelText: 'Time:',
+                      labelStyle: TextStyle(color: Colors.black45),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                TextFormField(
+                  maxLines: 7,
+                  decoration: InputDecoration(
+                    labelText: 'Description',
+                    alignLabelWithHint: true,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                AttachImageButton(),
+                SizedBox(
+                  height: 30,
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text('Post'),
+                  style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue[400],
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 7, vertical: 20),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15))),
+                ),
+              ],
+            ),
+          ),
+        ));
+  }
+}
+
+class AttachImageButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: () {},
+      icon: Icon(Icons.add),
+      label: Text('Attach an image'),
+      style: OutlinedButton.styleFrom(
+          foregroundColor: Colors.blue,
+          side: BorderSide(
+            width: 1.0,
+            color: Colors.blue,
+          ),
+          padding: EdgeInsets.all(30),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
     );
   }
 }
