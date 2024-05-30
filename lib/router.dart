@@ -16,7 +16,7 @@ final GoRouter router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/',
-      builder: (BuildContext context, GoRouterState state) => LogInPage(),
+      builder: (BuildContext context, GoRouterState state) =>  NoAccount(),
       routes: <RouteBase>[
         GoRoute(
           path: 'login',
