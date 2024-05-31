@@ -7,8 +7,10 @@ import 'package:flutter_project/post/bloc/post_event.dart';
 import 'package:flutter_project/post/bloc/post_state.dart';
 import 'package:flutter_project/post/repository/post_repository.dart';
 import 'package:flutter_project/post/model/post.dart';
+import '../../secure_storage_service.dart';
 
 class WithAccount extends StatelessWidget {
+  final SecureStorageService _secureStorageService = SecureStorageService();
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -21,13 +23,14 @@ class WithAccount extends StatelessWidget {
           backgroundColor: Colors.blue[300],
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await _secureStorageService.deleteTokenRolesAndUserId();
                 context.go('/login');
               },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 17),
                 child: Text(
-                  'Log In',
+                  'Log out',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

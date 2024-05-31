@@ -1,13 +1,13 @@
 class User {
   final String id;
   final String email;
-  final String username;
+  final String fullname;
   final List<String> roles;
 
   User({
     required this.id,
     required this.email,
-    required this.username,
+    required this.fullname,
     required this.roles,
   });
 
@@ -15,8 +15,17 @@ class User {
     return User(
       id: json['id'] ?? '', // Provide default values if null
       email: json['email'] ?? '',
-      username: json['username'] ?? '',
+      fullname: json['fullname'] ?? '',
       roles: List<String>.from(json['roles'] ?? []),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'fullname': fullname,
+      'roles': roles,
+    };
   }
 }

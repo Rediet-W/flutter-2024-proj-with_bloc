@@ -1,136 +1,91 @@
-// import 'package:flutter_project/comment/model/comment.dart';
-// import 'package:flutter_project/comment/repository/comment_repository.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:mockito/annotations.dart';
-// import 'package:mockito/mockito.dart';
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
-// import 'comment_repository_test.mocks.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'dart:convert';
+import 'package:flutter_project/comment/model/comment.dart';
+import 'package:flutter_project/comment/repository/comment_repository.dart';
+import 'package:flutter_project/secure_storage_service.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
-// @GenerateMocks([http.Client])
-// void main() {
-//   late CommentRepository commentRepository;
-//   late MockClient mockHttpClient;
+import 'comment_repository_test.mocks.dart';
 
-//   setUp(() {
-//     mockHttpClient = MockClient();
-//     // Create a CommentRepository instance for testing, mocking the HTTP client within the tests.
-//     commentRepository = CommentRepository(baseUrl: 'http://10.0.2.2:3003');
-//   });
+// Generate mocks for the SecureStorageService
+@GenerateMocks([SecureStorageService])
+void main() {
+  late CommentRepository commentRepository;
+  late MockSecureStorageService mockSecureStorageService;
+  late http.Client mockClient; // Declare the mock client here
 
-//   group('fetchComments', () {
-//     test('returns a list of comments if the HTTP call completes successfully',
-//         () async {
-//       final responseJson = [
-//         {
-//           'id': '1',
-//           'userId': 'user1',
-//           'content': 'This is a comment',
-//         },
-//       ];
+  setUp(() {
+    mockSecureStorageService = MockSecureStorageService();
 
-//       // Mocking the HTTP client to return a successful response
-//       when(mockHttpClient.get(Uri.parse('http://10.0.2.2:3003/comments')))
-//           .thenAnswer(
-//               (_) async => http.Response(jsonEncode(responseJson), 200));
+    // Initialize MockClient
+    mockClient = MockClient((request) async {
+      if (request.method == 'GET' && request.url.path == '/comments') {
+        return http.Response(
+            jsonEncode([
+              {"id": "1", "userId": "user1", "content": "Comment 1"},
+              {"id": "2", "userId": "user2", "content": "Comment 2"}
+            ]),
+            200);
+      } else if (request.method == 'POST' && request.url.path == '/comments') {
+        final body = jsonDecode(request.body);
+        return http.Response(
+            jsonEncode({
+              "id": "1",
+              "userId": body['userId'],
+              "content": body['content']
+            }),
+            201);
+      } else if (request.method == 'DELETE' &&
+          request.url.path.startsWith('/comments/')) {
+        return http.Response('', 200);
+      } else if (request.method == 'PATCH' &&
+          request.url.path.startsWith('/comments/')) {
+        final body = jsonDecode(request.body);
+        return http.Response(jsonEncode({"content": body['content']}), 200);
+      }
+      return http.Response('Not Found', 404);
+    });
 
-//       // Use a private method to inject the mock client for testing
-//       await _setMockHttpClientForTesting(commentRepository, mockHttpClient);
+    // Use the mockClient directly in the repository creation
+    commentRepository = CommentRepository(baseUrl: 'http://localhost:3003');
+  });
 
-//       // Fetch comments
-//       final comments = await commentRepository.fetchComments();
+  test(
+      'fetchComments returns a list of comments if the http call completes successfully',
+      () async {
+    List<Comment> comments = await commentRepository.fetchComments();
+    expect(comments.length, 2);
+    expect(comments[0].content, 'Comment 1');
+    expect(comments[1].content, 'Comment 2');
+  });
 
-//       // Verify the results
-//       expect(comments, isA<List<Comment>>());
-//       expect(comments.length, 1);
-//       expect(comments[0].content, 'This is a comment');
-//     });
+  test('addComment returns a Comment if the http call completes successfully',
+      () async {
+    when(mockSecureStorageService.readToken())
+        .thenAnswer((_) async => 'mock_token');
 
-//     test('throws an exception if the HTTP call completes with an error',
-//         () async {
-//       // Mocking the HTTP client to return an error response
-//       when(mockHttpClient.get(Uri.parse('http://10.0.2.2:3003/comments')))
-//           .thenAnswer((_) async => http.Response('Not Found', 404));
+    final comment = Comment(userId: 'user1', content: 'New Comment');
+    final addedComment = await commentRepository.addComment(comment);
+    expect(addedComment.id, "1");
+    expect(addedComment.content, "New Comment");
+  });
 
-//       // Use a private method to inject the mock client for testing
-//       await _setMockHttpClientForTesting(commentRepository, mockHttpClient);
+  test('deleteComment succeeds if the http call completes successfully',
+      () async {
+    when(mockSecureStorageService.readToken())
+        .thenAnswer((_) async => 'mock_token');
 
-//       // Expect the fetchComments method to throw an exception
-//       expect(
-//           () async => await commentRepository.fetchComments(), throwsException);
-//     });
-//   });
+    expect(commentRepository.deleteComment('1'), completes);
+  });
 
-//   group('addComment', () {
-//     test('returns a comment if the HTTP call completes successfully', () async {
-//       final newComment = Comment(
-//         id: '1',
-//         userId: 'user1',
-//         content: 'This is a new comment',
-//       );
+  test('editComment succeeds if the http call completes successfully',
+      () async {
+    when(mockSecureStorageService.readToken())
+        .thenAnswer((_) async => 'mock_token');
 
-//       final responseJson = {
-//         'id': '1',
-//         'userId': 'user1',
-//         'content': 'This is a new comment',
-//       };
-
-//       // Mocking the HTTP client to return a successful response
-//       when(mockHttpClient.post(
-//         Uri.parse('http://10.0.2.2:3003/comments'),
-//         headers: {"Content-Type": "application/json"},
-//         body: jsonEncode(newComment.toJson()),
-//       )).thenAnswer((_) async => http.Response(jsonEncode(responseJson), 201));
-
-//       // Use a private method to inject the mock client for testing
-//       await _setMockHttpClientForTesting(commentRepository, mockHttpClient);
-
-//       // Add a comment
-//       final comment = await commentRepository.addComment(newComment);
-
-//       // Verify the results
-//       expect(comment, isA<Comment>());
-//       expect(comment.content, 'This is a new comment');
-//     });
-
-//     test('throws an exception if the HTTP call completes with an error',
-//         () async {
-//       final newComment = Comment(
-//         id: '1',
-//         userId: 'user1',
-//         content: 'This is a new comment',
-//       );
-
-//       // Mocking the HTTP client to return an error response
-//       when(mockHttpClient.post(
-//         Uri.parse('http://10.0.2.2:3003/comments'),
-//         headers: {"Content-Type": "application/json"},
-//         body: jsonEncode(newComment.toJson()),
-//       )).thenAnswer((_) async => http.Response('Failed to add comment', 400));
-
-//       // Use a private method to inject the mock client for testing
-//       await _setMockHttpClientForTesting(commentRepository, mockHttpClient);
-
-//       // Expect the addComment method to throw an exception
-//       expect(() async => await commentRepository.addComment(newComment),
-//           throwsException);
-//     });
-//   });
-// }
-
-// /// Private method to inject a mock HTTP client into the CommentRepository for testing.
-// Future<void> _setMockHttpClientForTesting(
-//     CommentRepository repository, http.Client mockClient) async {
-//   // Reflection can be used here if you do not want to change the actual repository code.
-//   // You can use package `reflectable` or similar to access private fields or methods.
-//   final _clientField = repository.runtimeType
-//       .toString()
-//       .toLowerCase()
-//       .replaceFirst(
-//           '_', ''); // Normally you'd use some reflection approach here.
-
-//   // Inject the mock client
-//   final clientSymbol = Symbol('_client');
-//   final mirror = reflect(repository);
-//   mirror.setField(clientSymbol, mockClient);
-// }
+    expect(commentRepository.editComment('1', 'Updated Comment'), completes);
+  });
+}

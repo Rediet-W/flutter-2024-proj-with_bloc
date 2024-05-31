@@ -1,73 +1,128 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../auth/bloc/auth_bloc.dart';
+import '../../auth/bloc/auth_event.dart';
+import '../../auth/bloc/auth_state.dart';
+import '../../auth/repository/auth_repository.dart';
+import '../../secure_storage_service.dart';
 
-class ProfileTwo extends StatefulWidget {
+class ProfileTwo extends StatelessWidget {
   const ProfileTwo({Key? key}) : super(key: key);
 
   @override
-  State<ProfileTwo> createState() => _ProfileTwoState();
+  Widget build(BuildContext context) {
+    final authRepository = AuthRepository();
+
+    return BlocProvider(
+      create: (context) => AuthBloc(authRepository: authRepository)
+        ..add(LoadUserProfile('user-id-from-secure-storage')),
+      child: ProfileView(),
+    );
+  }
 }
 
-class _ProfileTwoState extends State<ProfileTwo> {
-  final TextEditingController _name =
-      TextEditingController(text: "Meron fantahun");
-  final TextEditingController _controller =
-      TextEditingController(text: "09919123433");
-  final TextEditingController _email =
-      TextEditingController(text: "@m_fantahun");
+class ProfileView extends StatefulWidget {
+  const ProfileView({Key? key}) : super(key: key);
 
-  bool _isNameEnabled = false;
-  bool _isPhoneEnabled = false;
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+  final TextEditingController _password = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+
+  bool _isPasswordEnabled = false;
   bool _isEmailEnabled = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.blue[300],
-          title: const Center(
-            child: Text(
-              'your Profile',
-              style: TextStyle(color: Colors.white),
-            ),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.blue[300],
+        title: const Center(
+          child: Text(
+            'Your Profile',
+            style: TextStyle(color: Colors.white),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(30),
-            child: Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CircleAvatar(
-                    radius: 100.0,
-                    child: Icon(
-                      Icons.account_circle,
-                      size: 200,
-                    ),
-                  ),
-                  const Divider(
-                    height: 60,
-                    color: Colors.black,
-                  ),
-                  Column(
+      ),
+      body: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state is ProfileInitial || state is ProfileLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is ProfileLoaded) {
+            _password.text = ''; // Password shouldn't be displayed
+            _email.text = state.user.email;
+
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(30),
+                child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      buildProfileField("Name", _name, _isNameEnabled),
-                      buildProfileField(
-                          "Phone number", _controller, _isPhoneEnabled),
-                      buildProfileField("Email", _email, _isEmailEnabled),
+                      const CircleAvatar(
+                        radius: 100.0,
+                        child: Icon(
+                          Icons.account_circle,
+                          size: 200,
+                        ),
+                      ),
+                      const Divider(
+                        height: 60,
+                        color: Colors.black,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          buildProfileField(
+                              "Password", _password, _isPasswordEnabled),
+                          buildProfileField("Email", _email, _isEmailEnabled),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          FloatingActionButton(
+                            onPressed: () {
+                              BlocProvider.of<AuthBloc>(context).add(
+                                UpdateUserProfile('user-id-from-secure-storage',
+                                    _password.text),
+                              );
+                            },
+                            child: Icon(Icons.edit),
+                          ),
+                          FloatingActionButton(
+                            onPressed: () {
+                              BlocProvider.of<AuthBloc>(context).add(
+                                DeleteUserProfile(
+                                    'user-id-from-secure-storage'),
+                              );
+                            },
+                            child: Icon(Icons.delete),
+                          ),
+                        ],
+                      )
                     ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ));
+            );
+          } else if (state is ProfileUpdated) {
+            return Center(child: Text('Profile Updated Successfully!'));
+          } else if (state is ProfileDeleted) {
+            return Center(child: Text('Profile Deleted Successfully!'));
+          } else if (state is ProfileError) {
+            return Center(child: Text('Error: ${state.message}'));
+          } else {
+            return Center(child: Text('Unknown state'));
+          }
+        },
+      ),
+    );
   }
 
   Widget buildProfileField(
@@ -94,15 +149,13 @@ class _ProfileTwoState extends State<ProfileTwo> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.edit),
+                  icon: const Icon(Icons.abc),
                   onPressed: () {
                     setState(() {
-                      if (label == "Name") {
-                        _isNameEnabled = !_isNameEnabled;
-                      } else if (label == "Phone number") {
-                        _isPhoneEnabled = !_isPhoneEnabled;
+                      if (label == "Password") {
+                        _isPasswordEnabled = !_isPasswordEnabled;
                       } else if (label == "Email") {
-                        _isEmailEnabled = !_isEmailEnabled;
+                        _isEmailEnabled = _isEmailEnabled;
                       }
                     });
                   },

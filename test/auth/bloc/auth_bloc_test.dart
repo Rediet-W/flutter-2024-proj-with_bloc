@@ -20,7 +20,7 @@ void main() {
     const String testPassword = 'testpassword';
     const String testUsername = 'testuser';
     User testUser =
-        User(id: '1', email: testEmail, username: testUsername, roles: []);
+        User(id: '1', email: testEmail, fullname: testUsername, roles: []);
 
     setUp(() {
       mockAuthRepository = MockAuthRepository();

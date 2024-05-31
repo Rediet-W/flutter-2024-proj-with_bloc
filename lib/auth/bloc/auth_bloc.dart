@@ -3,9 +3,11 @@ import 'auth_event.dart';
 import 'auth_state.dart';
 import '../repository/auth_repository.dart';
 import 'package:flutter/foundation.dart';
+import '../../secure_storage_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
+  final SecureStorageService _secureStorageService = SecureStorageService();
 
   AuthBloc({required this.authRepository}) : super(AuthInitial()) {
     on<LoginEvent>((event, emit) async {
@@ -22,6 +24,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
+    on<LoadUserProfile>((event, emit) async {
+      emit(ProfileLoading());
+
+      try {
+        final userId = await _secureStorageService.readUserId();
+        final user = await authRepository.getUserProfile(userId);
+        emit(ProfileLoaded(user));
+      } catch (e) {
+        emit(ProfileError('Failed to load profile: ${e.toString()}'));
+        emit(ProfileInitial());
+      }
+    });
+
     on<SignupEvent>((event, emit) async {
       emit(AuthLoading());
 
@@ -34,6 +49,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         debugPrint('Signup failed: $e');
         emit(AuthError('Signup failed: ${e.toString()}'));
         emit(AuthInitial());
+      }
+    });
+
+    on<UpdateUserProfile>((event, emit) async {
+      emit(ProfileLoading());
+      try {
+        final userId = await _secureStorageService.readUserId();
+        final user =
+            await authRepository.updateUserProfile(userId, event.password);
+        emit(ProfileUpdated(user));
+      } catch (e) {
+        emit(ProfileError(e.toString()));
+      }
+    });
+
+    on<DeleteUserProfile>((event, emit) async {
+      emit(ProfileDeleting());
+
+      try {
+        final userId = await _secureStorageService.readUserId();
+        await authRepository.deleteUserProfile(userId);
+        debugPrint('Profile deleted');
+        emit(ProfileDeleted());
+      } catch (e) {
+        debugPrint('Profile delete failed: $e');
+        emit(ProfileError('Profile delete failed: ${e.toString()}'));
       }
     });
 

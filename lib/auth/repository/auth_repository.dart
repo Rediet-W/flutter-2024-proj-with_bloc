@@ -23,7 +23,7 @@ class AuthRepository {
       final data = jsonDecode(response.body);
       final token = data['token'];
       final roles = List<String>.from(data['roles'] ?? []);
-      final userId = data['id']; // Assuming the response contains userId
+      final userId = data['id'];
       if (token == null || roles.isEmpty || userId == null) {
         throw Exception('Token, roles, or userId missing in response');
       }
@@ -33,7 +33,7 @@ class AuthRepository {
       return User(
         id: userId,
         email: data['email'] ?? '',
-        username: data['username'] ?? '',
+        fullname: data['fullname'] ?? '',
         roles: roles,
       );
     } else {
@@ -42,7 +42,11 @@ class AuthRepository {
     }
   }
 
-  Future<User> signup(String username, String email, String password) async {
+  Future<User> signup(
+    String username,
+    String email,
+    String password,
+  ) async {
     final response = await http.post(
       Uri.parse('$baseUrl/signup'),
       headers: <String, String>{
@@ -59,7 +63,7 @@ class AuthRepository {
       final data = jsonDecode(response.body);
       final token = data['token'];
       final roles = List<String>.from(data['roles'] ?? []);
-      final userId = data['id']; // Assuming the response contains userId
+      final userId = data['id'];
       if (token == null || roles.isEmpty || userId == null) {
         throw Exception('Token, roles, or userId missing in response');
       }
@@ -69,7 +73,7 @@ class AuthRepository {
       return User(
         id: userId,
         email: data['email'] ?? '',
-        username: data['username'] ?? '',
+        fullname: data['fullname'] ?? '',
         roles: roles,
       );
     } else {
@@ -80,5 +84,60 @@ class AuthRepository {
 
   Future<void> logout() async {
     await _secureStorageService.deleteTokenRolesAndUserId();
+  }
+
+  Future<User> getUserProfile(String? userId) async {
+    final token = await _secureStorageService.readToken();
+    final response = await http.get(
+      Uri.parse('http://localhost:3003/users/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return User.fromJson(data);
+    } else {
+      throw Exception(
+          'Failed to load profile: ${response.statusCode} ${response.reasonPhrase}');
+    }
+  }
+
+  Future<User> updateUserProfile(String? userId, String password) async {
+    final response = await http.patch(
+      Uri.parse('http://localhost:3003/users/$userId/password'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${await _secureStorageService.readToken()}',
+      },
+      body: jsonEncode(<String, String>{
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return User.fromJson(data);
+    } else {
+      throw Exception(
+          'Failed to update user profile: ${response.reasonPhrase}');
+    }
+  }
+
+  Future<void> deleteUserProfile(String? userId) async {
+    final response = await http.delete(
+      Uri.parse('http://localhost:3003/users/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${await _secureStorageService.readToken()}',
+      },
+    );
+
+    if (response.statusCode != 204) {
+      throw Exception(
+          'Failed to delete user profile: ${response.reasonPhrase}');
+    }
   }
 }

@@ -31,3 +31,40 @@ class AuthError extends AuthState {
   @override
   List<Object> get props => [message];
 }
+
+class ProfileInitial extends AuthState {}
+
+class ProfileLoading extends AuthState {}
+
+class ProfileLoaded extends AuthState {
+  final User user;
+
+  ProfileLoaded(this.user);
+
+  @override
+  List<Object> get props => [user];
+}
+
+class ProfileError extends AuthState {
+  final String message;
+
+  ProfileError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class ProfileUpdating extends AuthState {}
+
+class ProfileUpdated extends AuthState {
+  final User user;
+
+  const ProfileUpdated(this.user);
+
+  @override
+  List<Object> get props => [user];
+}
+
+class ProfileDeleting extends AuthState {}
+
+class ProfileDeleted extends AuthState {}
