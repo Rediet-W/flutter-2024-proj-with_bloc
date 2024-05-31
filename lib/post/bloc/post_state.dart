@@ -1,4 +1,3 @@
-// post_state.dart
 import 'package:equatable/equatable.dart';
 import '../model/post.dart';
 
@@ -41,3 +40,25 @@ class PostLoadingDetailsError extends PostState {
   @override
   List<Object?> get props => [error];
 }
+
+class PostDetailsLoaded extends PostState {
+  final Post postDetails;
+
+  PostDetailsLoaded(this.postDetails);
+
+  @override
+  List<Object?> get props => [postDetails];
+}
+
+class PostError extends PostState {
+  final String error;
+
+  PostError(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
+
+class PostDeleted extends PostState {}
+
+class PostEdited extends PostState {}

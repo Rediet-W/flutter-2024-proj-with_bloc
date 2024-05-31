@@ -8,16 +8,16 @@ import '../../secure_storage_service.dart'; // Import SecureStorageService
 import 'package:mongo_dart/mongo_dart.dart';
 
 class CommentPage extends StatelessWidget {
-  final ObjectId postId;
+  final String? postId;
 
-  CommentPage({required this.postId});
+  CommentPage({this.postId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
           CommentBloc(commentRepository: context.read<CommentRepository>())
-            ..add(LoadComments(postId)),
+            ..add(LoadComments()),
       child: Scaffold(
         appBar: AppBar(
           title: Text('Comments'),
@@ -60,7 +60,6 @@ class CommentPage extends StatelessWidget {
                           final userId =
                               await SecureStorageService().readUserId();
                           context.read<CommentBloc>().add(AddComment(
-                                postId: postId,
                                 userId: userId,
                                 content: comment,
                               ));
@@ -79,7 +78,6 @@ class CommentPage extends StatelessWidget {
                         final userId =
                             await SecureStorageService().readUserId();
                         context.read<CommentBloc>().add(AddComment(
-                              postId: postId,
                               userId: userId,
                               content: comment,
                             ));

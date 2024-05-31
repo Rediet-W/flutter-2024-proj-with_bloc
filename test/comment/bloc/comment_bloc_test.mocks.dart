@@ -3,14 +3,13 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
+import 'dart:async' as _i5;
 
-import 'package:flutter_project/comment/model/comment.dart' as _i3;
+import 'package:flutter_project/comment/model/comment.dart' as _i2;
 import 'package:flutter_project/comment/repository/comment_repository.dart'
-    as _i4;
-import 'package:http/http.dart' as _i2;
+    as _i3;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -25,18 +24,8 @@ import 'package:mockito/src/dummies.dart' as _i5;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
-  _FakeClient_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeComment_1 extends _i1.SmartFake implements _i3.Comment {
-  _FakeComment_1(
+class _FakeComment_0 extends _i1.SmartFake implements _i2.Comment {
+  _FakeComment_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -48,7 +37,7 @@ class _FakeComment_1 extends _i1.SmartFake implements _i3.Comment {
 /// A class which mocks [CommentRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCommentRepository extends _i1.Mock implements _i4.CommentRepository {
+class MockCommentRepository extends _i1.Mock implements _i3.CommentRepository {
   MockCommentRepository() {
     _i1.throwOnMissingStub(this);
   }
@@ -56,44 +45,61 @@ class MockCommentRepository extends _i1.Mock implements _i4.CommentRepository {
   @override
   String get baseUrl => (super.noSuchMethod(
         Invocation.getter(#baseUrl),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i4.dummyValue<String>(
           this,
           Invocation.getter(#baseUrl),
         ),
       ) as String);
 
   @override
-  _i2.Client get httpClient => (super.noSuchMethod(
-        Invocation.getter(#httpClient),
-        returnValue: _FakeClient_0(
-          this,
-          Invocation.getter(#httpClient),
-        ),
-      ) as _i2.Client);
-
-  @override
-  _i6.Future<List<_i3.Comment>> fetchComments(String? postId) =>
-      (super.noSuchMethod(
+  _i5.Future<List<_i2.Comment>> fetchComments() => (super.noSuchMethod(
         Invocation.method(
           #fetchComments,
-          [postId],
+          [],
         ),
-        returnValue: _i6.Future<List<_i3.Comment>>.value(<_i3.Comment>[]),
-      ) as _i6.Future<List<_i3.Comment>>);
+        returnValue: _i5.Future<List<_i2.Comment>>.value(<_i2.Comment>[]),
+      ) as _i5.Future<List<_i2.Comment>>);
 
   @override
-  _i6.Future<_i3.Comment> addComment(_i3.Comment? comment) =>
+  _i5.Future<_i2.Comment> addComment(_i2.Comment? comment) =>
       (super.noSuchMethod(
         Invocation.method(
           #addComment,
           [comment],
         ),
-        returnValue: _i6.Future<_i3.Comment>.value(_FakeComment_1(
+        returnValue: _i5.Future<_i2.Comment>.value(_FakeComment_0(
           this,
           Invocation.method(
             #addComment,
             [comment],
           ),
         )),
-      ) as _i6.Future<_i3.Comment>);
+      ) as _i5.Future<_i2.Comment>);
+
+  @override
+  _i5.Future<void> deleteComment(String? commentId) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteComment,
+          [commentId],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> editComment(
+    String? commentId,
+    String? content,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #editComment,
+          [
+            commentId,
+            content,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }

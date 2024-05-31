@@ -112,19 +112,4 @@ class MockAuthRepository extends _i1.Mock implements _i3.AuthRepository {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<_i2.User> getUserDetails() => (super.noSuchMethod(
-        Invocation.method(
-          #getUserDetails,
-          [],
-        ),
-        returnValue: _i5.Future<_i2.User>.value(_FakeUser_0(
-          this,
-          Invocation.method(
-            #getUserDetails,
-            [],
-          ),
-        )),
-      ) as _i5.Future<_i2.User>);
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_project/post/repository/post_repository.dart';
 
 class PostProvider extends StatelessWidget {
@@ -10,11 +9,10 @@ class PostProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final http.Client httpClient = http.Client();
     final PostRepository postRepository = PostRepository(
       baseUrl: 'http://10.0.2.2:3003/',
-      httpClient: httpClient,
-      client: httpClient,
+      // httpClient: httpClient,
+      // client: httpClient,
     );
 
     return MultiRepositoryProvider(

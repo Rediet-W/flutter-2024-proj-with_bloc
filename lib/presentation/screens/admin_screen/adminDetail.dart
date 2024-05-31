@@ -1,228 +1,186 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_project/post/bloc/post_bloc.dart';
+import 'package:flutter_project/post/bloc/post_event.dart';
+import 'package:flutter_project/post/bloc/post_state.dart';
+import 'package:flutter_project/post/repository/post_repository.dart';
+import 'package:flutter_project/post/model/post.dart';
 
 class AdminItemPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue[100],
-      appBar: AppBar(
-        backgroundColor: Colors.blue[300],
-        actions: [
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-            child: const Text(
-              'Item',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 19,
-                  color: Colors.white,
-                  letterSpacing: 1.3),
-            ),
-          )
-        ],
-        leading: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: const Icon(
-            Icons.arrow_back,
-          ),
-          style: const ButtonStyle(
-              iconColor: MaterialStatePropertyAll(Colors.white)),
-        ),
-      ),
-      body: Center(
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Container(
-                  height: 200,
-                  color: Colors.blue[300],
-                )
-              ],
-            ),
-            Positioned(
-                top: 50,
-                left: 55,
-                child: ClipOval(
-                  child: Container(
-                    width: 300,
-                    height: 300,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: Image.asset(
-                      'Assets/keys.jpg',
-                      fit: BoxFit.cover,
-                    ),
+    return BlocProvider(
+      create: (context) => PostBloc(
+        postRepository: PostRepository(baseUrl: 'http://localhost:3003/'),
+      )..add(LoadPost('')), // Ensure LoadPost event is correct
+      child: Scaffold(
+        backgroundColor: Colors.blue[100],
+        appBar: AppBar(
+          backgroundColor: Colors.blue[300],
+          actions: [
+            TextButton(
+              onPressed: () {
+                context.go('/login');
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 17),
+                child: Text(
+                  'Log In',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                    letterSpacing: 1.3,
                   ),
-                )),
-            Positioned(
-                top: 380,
-                left: 45,
-                child: Container(
-                    width: 330,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const Center(
-                            child: Text(
-                              'Item name',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.blue[300],
-                                  border: Border.all(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                padding: const EdgeInsets.all(16),
-                                child: const Column(
-                                  children: [
-                                    Text(
-                                      "Found on ",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Color.fromARGB(
-                                              255, 238, 238, 238)),
-                                    ),
-                                    Text(
-                                      "April 4, 2024",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          color: Color.fromARGB(
-                                              255, 238, 238, 238)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(color: Colors.blue),
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                padding: const EdgeInsets.all(16),
-                                margin: const EdgeInsets.all(10),
-                                child: const Column(
-                                  children: [
-                                    Text(
-                                      "Location ",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "5 kilo Lounge",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            child: const Text(
-                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sed purus in sapien tempor pulvinar. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nullam molestie, nulla sed scelerisque pharetra, nisi quam fringilla odio, vel porta mauris velit a dolor. Integer nec arcu non elit consequat semper. Sed eui',
-                              style: TextStyle(
-                                overflow: TextOverflow.visible,
-                              ),
-                            ),
-                          ),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .start, // Align buttons to the left
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        // Delete button action
-                                      },
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.white),
-                                        side: MaterialStateProperty.resolveWith<
-                                            BorderSide>(
-                                          (Set<MaterialState> states) {
-                                            return const BorderSide(
-                                              color: Colors.blue,
-                                              width:
-                                                  2, // Adjust border width as needed
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      child: const Text('Delete'),
-                                    ),
-                                    const SizedBox(
-                                        width:
-                                            10), // Add spacing between buttons
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        // Edit button action
-                                      },
-                                      child: const Text('Edit'),
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.blue),
-                                        side: MaterialStateProperty.resolveWith<
-                                            BorderSide>(
-                                          (Set<MaterialState> states) {
-                                            return const BorderSide(
-                                              color: Colors.white,
-                                              width:
-                                                  2, // Adjust border width as needed
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                // Add spacing between buttons and comment button
-                                IconButton(
-                                  onPressed: () {
-                                    context.go('/comment');
-                                  },
-                                  icon: const Icon(Icons.comment),
-                                  style: ButtonStyle(
-                                    iconColor:
-                                        MaterialStateProperty.all(Colors.blue),
-                                    side: MaterialStateProperty.resolveWith<
-                                        BorderSide>(
-                                      (Set<MaterialState> states) {
-                                        return const BorderSide(
-                                          color: Colors.white,
-                                          width: 2,
-                                        );
-                                      },
-                                    ),
-                                    alignment: Alignment.topCenter,
-                                  ),
-                                ),
-                              ]),
-                        ])))
+                ),
+              ),
+            ),
           ],
         ),
+        body: BlocBuilder<PostBloc, PostState>(
+          builder: (context, state) {
+            if (state is PostLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is PostLoadingDetailsError) {
+              return Center(
+                  child: Text('Failed to load posts: ${state.error}'));
+            } else if (state is PostLoaded) {
+              return Padding(
+                padding: EdgeInsets.all(10),
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 33,
+                  children: List.generate(state.posts.length, (index) {
+                    final post = state.posts[index];
+                    return GridItem(
+                      post: post,
+                      navigateToComment: (postId) {
+                        context.go('/comment?postId=$postId');
+                      },
+                    );
+                  }),
+                ),
+              );
+            } else if (state is PostLoading ||
+                state is PostLoadingDetailsError) {
+              return Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            } else {
+              return Scaffold(
+                body: Center(
+                  child: Text('Failed to load posts'),
+                ),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class GridItem extends StatelessWidget {
+  final Post post;
+  final Function(String? postId) navigateToComment;
+
+  GridItem({required this.post, required this.navigateToComment});
+
+  @override
+  Widget build(BuildContext context) {
+    Uint8List? imageData = post.pictureBuffer != null
+        ? Uint8List.fromList(post.pictureBuffer!)
+        : null;
+
+    return Card(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: 7),
+          Expanded(
+            child: imageData != null
+                ? Image.memory(
+                    imageData,
+                    fit: BoxFit.contain,
+                  )
+                : Container(
+                    color: Colors.grey, // Placeholder or default image
+                    child: Center(
+                      child: Text('No Image'),
+                    ),
+                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(post.description),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                onPressed: () {
+                  // Show dialog to edit description
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      TextEditingController _controller = TextEditingController(
+                        text: post.description,
+                      );
+                      return AlertDialog(
+                        title: Text('Edit Description'),
+                        content: TextField(
+                          controller: _controller,
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              context.read<PostBloc>().add(EditPost(
+                                    post.id,
+                                    _controller.text,
+                                  ));
+                              Navigator.pop(context);
+                            },
+                            child: Text('Save'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('Cancel'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                icon: Icon(Icons.edit),
+                color: Colors.blue,
+              ),
+              IconButton(
+                onPressed: () {
+                  context.read<PostBloc>().add(DeletePost(post.id));
+                },
+                icon: Icon(Icons.delete),
+                color: Colors.blue,
+              ),
+              IconButton(
+                onPressed: () {
+                  context.go('/admin_comment');
+                },
+                icon: Icon(Icons.comment),
+                color: Colors.blue,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

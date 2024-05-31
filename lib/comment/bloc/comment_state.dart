@@ -12,6 +12,8 @@ class CommentInitial extends CommentState {}
 
 class CommentsLoading extends CommentState {}
 
+class CommentSuccess extends CommentState {}
+
 class CommentsLoaded extends CommentState {
   final List<Comment> comments;
 
@@ -29,3 +31,7 @@ class CommentError extends CommentState {
   @override
   List<Object> get props => [message];
 }
+
+class CommentDeleted extends CommentState {}
+
+class CommentEdited extends CommentState {}

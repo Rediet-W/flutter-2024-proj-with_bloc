@@ -59,7 +59,7 @@ class AuthRepository {
       final data = jsonDecode(response.body);
       final token = data['token'];
       final roles = List<String>.from(data['roles'] ?? []);
-      final userId = data['userId']; // Assuming the response contains userId
+      final userId = data['id']; // Assuming the response contains userId
       if (token == null || roles.isEmpty || userId == null) {
         throw Exception('Token, roles, or userId missing in response');
       }

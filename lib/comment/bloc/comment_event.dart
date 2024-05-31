@@ -5,30 +5,33 @@ abstract class CommentEvent extends Equatable {
   const CommentEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
-class LoadComments extends CommentEvent {
-  final String postId;
-
-  LoadComments(ObjectId postId) : postId = postId.$oid;
-
-  @override
-  List<Object> get props => [postId];
-}
+class LoadComments extends CommentEvent {}
 
 class AddComment extends CommentEvent {
-  final String postId;
-  final String userId;
+  final String? userId;
   final String content;
 
   AddComment({
-    required postId,
-    required userId,
+    required this.userId,
     required this.content,
-  })  : postId = postId,
-        userId = userId;
+  });
 
   @override
-  List<Object> get props => [postId, userId, content];
+  List<Object?> get props => [userId, content];
+}
+
+class DeleteComment extends CommentEvent {
+  final String? commentId;
+
+  DeleteComment({required this.commentId});
+}
+
+class EditComment extends CommentEvent {
+  final String? commentId;
+  final String content;
+
+  EditComment({required this.commentId, required this.content});
 }

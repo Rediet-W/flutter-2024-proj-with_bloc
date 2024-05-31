@@ -30,20 +30,16 @@ class _LostFoundFormState extends State<LostFoundForm> {
     }
 
     try {
-      final url = Uri.parse('http://localhost:3003/items');
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'category': _titleController.text,
-          'description': _descriptionController.text,
-          'location': _locationController.text,
-          'time': _timeController.text,
-          'picture': base64Encode(
-              imageData), // Convert Uint8List to base64 string for sending
-        }),
-      );
-
+      var uri = Uri.parse('http://localhost:3003/items');
+      var request = http.MultipartRequest('POST', uri)
+        ..fields['description'] = _descriptionController.text
+        ..files.add(http.MultipartFile.fromBytes(
+          'picture', // Ensure this field matches the name expected by your NestJS backend
+          imageData,
+          filename:
+              'upload.jpg', // Optional, you can provide filename based on your requirement
+        ));
+      var response = await request.send();
       if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Post created successfully.')));

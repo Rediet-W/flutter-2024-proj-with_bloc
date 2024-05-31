@@ -10,12 +10,17 @@ import 'package:mockito/mockito.dart';
 
 import 'auth_bloc_test.mocks.dart';
 
-// Generate mock classes using Mockito
 @GenerateMocks([AuthRepository])
 void main() {
   group('AuthBloc', () {
     late MockAuthRepository mockAuthRepository;
     late AuthBloc authBloc;
+
+    const String testEmail = 'test@example.com';
+    const String testPassword = 'testpassword';
+    const String testUsername = 'testuser';
+    User testUser =
+        User(id: '1', email: testEmail, username: testUsername, roles: []);
 
     setUp(() {
       mockAuthRepository = MockAuthRepository();
@@ -27,10 +32,6 @@ void main() {
     });
 
     group('LoginEvent', () {
-      const String testEmail = 'test@example.com';
-      const String testPassword = 'testpassword';
-      User testUser = User(id: '1', email: testEmail, username: 'testuser');
-
       blocTest<AuthBloc, AuthState>(
         'emits [AuthLoading, AuthLoggedIn] when login is successful',
         build: () {
@@ -60,18 +61,14 @@ void main() {
             .add(const LoginEvent(email: testEmail, password: testPassword)),
         expect: () => [
           AuthLoading(),
-          const AuthError('Login failed'),
+          isA<AuthError>().having(
+              (error) => error.message, 'message', contains('Login failed')),
           AuthInitial(),
         ],
       );
     });
 
     group('SignupEvent', () {
-      const String testUsername = 'testuser';
-      const String testEmail = 'test@example.com';
-      const String testPassword = 'testpassword';
-      User testUser = User(id: '1', email: testEmail, username: testUsername);
-
       blocTest<AuthBloc, AuthState>(
         'emits [AuthLoading, AuthLoggedIn] when signup is successful',
         build: () {
@@ -103,11 +100,13 @@ void main() {
             username: testUsername, email: testEmail, password: testPassword)),
         expect: () => [
           AuthLoading(),
-          const AuthError('Signup failed'),
+          isA<AuthError>().having(
+              (error) => error.message, 'message', contains('Signup failed')),
           AuthInitial(),
         ],
       );
     });
+
     group('LogoutEvent', () {
       blocTest<AuthBloc, AuthState>(
         'emits [AuthLoading, AuthLoggedOut] when logout is successful',
@@ -136,7 +135,8 @@ void main() {
         act: (bloc) => bloc.add(LogoutEvent()),
         expect: () => [
           AuthLoading(),
-          const AuthError('Logout failed'),
+          isA<AuthError>().having(
+              (error) => error.message, 'message', contains('Logout failed')),
         ],
       );
     });

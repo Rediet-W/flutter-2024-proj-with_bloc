@@ -3,22 +3,21 @@ import '../repository/comment_repository.dart';
 import 'comment_event.dart';
 import 'comment_state.dart';
 import '../model/comment.dart';
-import 'package:mongo_dart/mongo_dart.dart';
-import '../../secure_storage_service.dart';
 
 class CommentBloc extends Bloc<CommentEvent, CommentState> {
   final CommentRepository commentRepository;
-  final SecureStorageService _secureStorageService = SecureStorageService();
 
   CommentBloc({required this.commentRepository}) : super(CommentInitial()) {
     on<LoadComments>((event, emit) async {
       emit(CommentsLoading());
 
       try {
-        final comments = await commentRepository.fetchComments(event.postId);
+        final comments = await commentRepository.fetchComments();
         emit(CommentsLoaded(comments));
       } catch (e) {
-        emit(CommentError('Failed to load comments'));
+        emit(CommentError(e is Exception
+            ? e.toString().replaceFirst('Exception: ', '')
+            : e.toString()));
       }
     });
 
@@ -27,28 +26,45 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
 
       try {
         final newComment = Comment(
-          postId: event.postId,
           userId: event.userId,
           content: event.content,
         );
+
         final comment = await commentRepository.addComment(newComment);
-        final currentState = state;
-        if (currentState is CommentsLoaded) {
-          emit(CommentsLoaded(List.from(currentState.comments)..add(comment)));
-        } else {
-          emit(CommentsLoaded([comment]));
-        }
+        emit(CommentSuccess());
       } catch (e) {
-        emit(CommentError('Failed to add comment'));
+        emit(CommentError(e is Exception
+            ? e.toString().replaceFirst('Exception: ', '')
+            : e.toString()));
       }
     });
-  }
 
-  Future<String> getUserId() async {
-    final userId = await _secureStorageService.readToken();
-    if (userId == null) {
-      throw Exception('User ID not found in secure storage');
-    }
-    return userId;
+    on<DeleteComment>((event, emit) async {
+      emit(CommentsLoading());
+
+      try {
+        await commentRepository.deleteComment(event.commentId);
+        emit(CommentDeleted());
+        add(LoadComments());
+      } catch (e) {
+        emit(CommentError(e is Exception
+            ? e.toString().replaceFirst('Exception: ', '')
+            : e.toString()));
+      }
+    });
+
+    on<EditComment>((event, emit) async {
+      emit(CommentsLoading());
+
+      try {
+        await commentRepository.editComment(event.commentId, event.content);
+        emit(CommentEdited());
+        add(LoadComments());
+      } catch (e) {
+        emit(CommentError(e is Exception
+            ? e.toString().replaceFirst('Exception: ', '')
+            : e.toString()));
+      }
+    });
   }
 }

@@ -7,10 +7,10 @@ import 'package:flutter_project/post/repository/post_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'dart:typed_data';
 
 import 'post_bloc_test.mocks.dart';
 
-// Generate mock classes using Mockito
 @GenerateMocks([PostRepository])
 void main() {
   group('PostBloc', () {
@@ -27,27 +27,30 @@ void main() {
     });
 
     group('CreatePost', () {
-      const String testTitle = 'Test Title';
+      const String testCategory = 'Test Category';
       const String testDescription = 'Test Description';
       const String testLocation = 'Test Location';
       const String testTime = 'Test Time';
+      final Uint8List testPictureBuffer = Uint8List.fromList([0, 1, 2]);
 
       blocTest<PostBloc, PostState>(
         'emits [PostLoading, PostSuccess] when creating a post is successful',
         build: () {
           when(mockPostRepository.createPost(
-            title: testTitle,
+            category: testCategory,
             description: testDescription,
             location: testLocation,
             time: testTime,
+            pictureBuffer: testPictureBuffer,
           )).thenAnswer((_) async => Future.value());
           return postBloc;
         },
         act: (bloc) => bloc.add(CreatePost(
-          title: testTitle,
+          category: testCategory,
           description: testDescription,
           location: testLocation,
           time: testTime,
+          pictureBuffer: testPictureBuffer,
         )),
         expect: () => [
           PostLoading(),
@@ -59,18 +62,20 @@ void main() {
         'emits [PostLoading, PostFailure] when creating a post fails',
         build: () {
           when(mockPostRepository.createPost(
-            title: testTitle,
+            category: testCategory,
             description: testDescription,
             location: testLocation,
             time: testTime,
+            pictureBuffer: testPictureBuffer,
           )).thenThrow(Exception('Failed to create post'));
           return postBloc;
         },
         act: (bloc) => bloc.add(CreatePost(
-          title: testTitle,
+          category: testCategory,
           description: testDescription,
           location: testLocation,
           time: testTime,
+          pictureBuffer: testPictureBuffer,
         )),
         expect: () => [
           PostLoading(),
@@ -82,16 +87,16 @@ void main() {
     group('LoadPost', () {
       final List<Post> testPosts = [
         Post(
-          title: 'Test Post 1',
-          description: 'Description 1',
+          id: '1',
           location: 'Location 1',
-          time: 'Time 1',
+          description: 'Description 1',
+          pictureBuffer: Uint8List.fromList([0, 1]),
         ),
         Post(
-          title: 'Test Post 2',
-          description: 'Description 2',
+          id: '2',
           location: 'Location 2',
-          time: 'Time 2',
+          description: 'Description 2',
+          pictureBuffer: Uint8List.fromList([2, 3]),
         ),
       ];
 
@@ -102,7 +107,7 @@ void main() {
               .thenAnswer((_) async => testPosts);
           return postBloc;
         },
-        act: (bloc) => bloc.add(LoadPost('postId')),
+        act: (bloc) => bloc.add(LoadPost('')),
         expect: () => [
           PostLoading(),
           PostLoaded(testPosts),
@@ -116,7 +121,7 @@ void main() {
               .thenThrow(Exception('Failed to load posts'));
           return postBloc;
         },
-        act: (bloc) => bloc.add(LoadPost('postId')),
+        act: (bloc) => bloc.add(LoadPost('')),
         expect: () => [
           PostLoading(),
           PostLoadingDetailsError(error: 'Exception: Failed to load posts'),

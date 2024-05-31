@@ -8,7 +8,7 @@ void main() {
       const email = 'test@example.com';
       const username = 'testUser';
 
-      final user = User(id: id, email: email, username: username);
+      final user = User(id: id, email: email, username: username, roles: []);
 
       expect(user.id, equals(id));
       expect(user.email, equals(email));

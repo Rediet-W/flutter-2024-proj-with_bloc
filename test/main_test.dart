@@ -19,7 +19,7 @@ import './post/bloc/post_bloc_test.dart' as post_bloc_test;
 import './comment/bloc/comment_bloc_test.dart' as comment_bloc_test;
 import './auth/bloc/auth_bloc_test.dart' as auth_bloc_test;
 import './auth/repository/auth_repository_test.dart' as auth_repo_test;
-import './comment/repository/comment_repositroy_test.dart' as comment_repo_test;
+import 'comment/repository/comment_repository_test.dart' as comment_repo_test;
 import './post/repository/post_repository_test.dart' as post_repo_test;
 import './auth/model/auth_model_test.dart' as auth_model_test;
 import './comment/model/comment_model_test.dart' as comment_model_test;

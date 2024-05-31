@@ -16,8 +16,10 @@ class SignUpPage extends StatelessWidget {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthLoggedIn) {
+            print('Navigating to /home');
             context.go('/home');
           } else if (state is AuthError) {
+            print('Error: ${state.message}');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
             );
@@ -40,6 +42,7 @@ class SignUpPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: Colors.black)),
                     TextFormField(
+                      key: Key('usernameField'),
                       controller: _usernameController,
                       decoration: const InputDecoration(
                         labelText: 'Username',
@@ -47,6 +50,7 @@ class SignUpPage extends StatelessWidget {
                       ),
                     ),
                     TextFormField(
+                      key: Key('emailField'),
                       controller: _emailController,
                       decoration: const InputDecoration(
                         labelText: 'Email',
@@ -54,6 +58,7 @@ class SignUpPage extends StatelessWidget {
                       ),
                     ),
                     TextFormField(
+                      key: Key('passwordField'),
                       controller: _passwordController,
                       decoration: const InputDecoration(
                         labelText: 'Password',
@@ -64,6 +69,7 @@ class SignUpPage extends StatelessWidget {
                     const SizedBox(height: 16.0),
                     GestureDetector(
                       onTap: () {
+                        print('Navigating to /login');
                         context.go('/login');
                       },
                       child: const Text(
@@ -77,6 +83,7 @@ class SignUpPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16.0),
                     ElevatedButton(
+                      key: Key('signUpButton'),
                       style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all<Color>(Colors.blue),

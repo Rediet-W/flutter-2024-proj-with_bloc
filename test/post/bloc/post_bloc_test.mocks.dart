@@ -3,13 +3,13 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
+import 'dart:async' as _i4;
+import 'dart:typed_data' as _i5;
 
 import 'package:flutter_project/post/model/post.dart' as _i6;
-import 'package:flutter_project/post/repository/post_repository.dart' as _i3;
-import 'package:http/http.dart' as _i2;
+import 'package:flutter_project/post/repository/post_repository.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i4;
+import 'package:mockito/src/dummies.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -24,20 +24,10 @@ import 'package:mockito/src/dummies.dart' as _i4;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
-  _FakeClient_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
 /// A class which mocks [PostRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPostRepository extends _i1.Mock implements _i3.PostRepository {
+class MockPostRepository extends _i1.Mock implements _i2.PostRepository {
   MockPostRepository() {
     _i1.throwOnMissingStub(this);
   }
@@ -45,60 +35,80 @@ class MockPostRepository extends _i1.Mock implements _i3.PostRepository {
   @override
   String get baseUrl => (super.noSuchMethod(
         Invocation.getter(#baseUrl),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i3.dummyValue<String>(
           this,
           Invocation.getter(#baseUrl),
         ),
       ) as String);
 
   @override
-  _i2.Client get client => (super.noSuchMethod(
-        Invocation.getter(#client),
-        returnValue: _FakeClient_0(
-          this,
-          Invocation.getter(#client),
-        ),
-      ) as _i2.Client);
-
-  @override
-  _i5.Future<void> createPost({
-    required String? title,
+  _i4.Future<void> createPost({
+    required String? category,
     required String? description,
     required String? location,
     required String? time,
+    _i5.Uint8List? pictureBuffer,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #createPost,
           [],
           {
-            #title: title,
+            #category: category,
             #description: description,
             #location: location,
             #time: time,
+            #pictureBuffer: pictureBuffer,
           },
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<Map<String, dynamic>> fetchPostDetails(String? postId) =>
+  _i4.Future<Map<String, dynamic>> fetchPostDetails(String? postId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchPostDetails,
           [postId],
         ),
         returnValue:
-            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i5.Future<Map<String, dynamic>>);
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
 
   @override
-  _i5.Future<List<_i6.Post>> fetchPosts() => (super.noSuchMethod(
+  _i4.Future<List<_i6.Post>> fetchPosts() => (super.noSuchMethod(
         Invocation.method(
           #fetchPosts,
           [],
         ),
-        returnValue: _i5.Future<List<_i6.Post>>.value(<_i6.Post>[]),
-      ) as _i5.Future<List<_i6.Post>>);
+        returnValue: _i4.Future<List<_i6.Post>>.value(<_i6.Post>[]),
+      ) as _i4.Future<List<_i6.Post>>);
+
+  @override
+  _i4.Future<void> deletePost(String? postId) => (super.noSuchMethod(
+        Invocation.method(
+          #deletePost,
+          [postId],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> editPost(
+    String? postId,
+    String? content,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #editPost,
+          [
+            postId,
+            content,
+          ],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }

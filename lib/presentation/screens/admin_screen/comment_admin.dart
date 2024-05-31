@@ -1,174 +1,152 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../comment/bloc/comment_bloc.dart';
+import '../../../comment/repository/comment_repository.dart';
+import '../../../comment/bloc/comment_state.dart';
+import '../../../comment/bloc/comment_event.dart';
+import '../../../secure_storage_service.dart'; // Import SecureStorageService
+import 'package:mongo_dart/mongo_dart.dart';
 
-class AdminCommentPage extends StatefulWidget {
-  @override
-  _AdminCommentPageState createState() => _AdminCommentPageState();
-}
+class AdminCommentPage extends StatelessWidget {
+  final String? postId;
 
-class _AdminCommentPageState extends State<AdminCommentPage> {
-  List<Map<String, String>> filedata = [
-    {
-      'name': 'Nahusenay',
-      'message':
-          "Thank you for posting! I lost my keys near the park yesterday. Could you please describe any unique features of the key? I can confirm if it's mine.",
-    },
-    {
-      'name': 'Liya Abebe',
-      'message': 'Very cool',
-    },
-    {
-      'name': 'Abel Daniel',
-      'message': 'Do the keys have ',
-    },
-    {
-      'name': 'Dagmawi Elias',
-      'message': 'Your phone is not working how can I contact you',
-    },
-  ];
-
-  Widget commentChild(List<Map<String, String>> data) {
-    return ListView.builder(
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(2.0, 8.0, 2.0, 0.0),
-          child: ListTile(
-            title: Row(
-              children: [
-                Text(
-                  data[index]['name']!,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      filedata.removeAt(index);
-                    });
-                  },
-                ),
-              ],
-            ),
-            subtitle: Text(data[index]['message']!),
-          ),
-        );
-      },
-    );
-  }
+  AdminCommentPage({this.postId});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue[300],
-        actions: [
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-            child: const Text(
-              'comments',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 19,
-                  color: Colors.white,
-                  letterSpacing: 1.3),
+    return BlocProvider(
+      create: (context) => CommentBloc(
+        commentRepository: context.read<CommentRepository>(),
+      )..add(LoadComments()),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Comments'),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: BlocBuilder<CommentBloc, CommentState>(
+                builder: (context, state) {
+                  if (state is CommentsLoading) {
+                    return Container(child: CircularProgressIndicator());
+                  } else if (state is CommentsLoaded) {
+                    return ListView.builder(
+                      itemCount: state.comments.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(state.comments[index].content),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () {
+// Show dialog to edit comment
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      TextEditingController _controller =
+                                          TextEditingController(
+                                        text: state.comments[index].content,
+                                      );
+                                      return AlertDialog(
+                                        title: Text('Edit Comment'),
+                                        content: TextField(
+                                          controller: _controller,
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              context
+                                                  .read<CommentBloc>()
+                                                  .add(EditComment(
+                                                    commentId: state
+                                                        .comments[index].id,
+                                                    content: _controller.text,
+                                                  ));
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text('Save'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text('Cancel'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () {
+                                  context.read<CommentBloc>().add(DeleteComment(
+                                        commentId: state.comments[index].id,
+                                      ));
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  } else if (state is CommentError) {
+                    return Container(child: Text(state.message));
+                  } else {
+                    return Container(child: Text('No comments found'));
+                  }
+                },
+              ),
             ),
-          )
-        ],
-        leading: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: const Icon(
-            Icons.arrow_back,
-          ),
-          style: const ButtonStyle(
-              iconColor: MaterialStatePropertyAll(Colors.white)),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        labelText: 'Add a comment...',
+                      ),
+                      onSubmitted: (comment) async {
+                        if (comment.isNotEmpty) {
+                          final userId =
+                              await SecureStorageService().readUserId();
+                          context.read<CommentBloc>().add(AddComment(
+                                userId: userId,
+                                content: comment,
+                              ));
+                        }
+                      },
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: () async {
+                      final commentController = (context as Element)
+                          .findAncestorWidgetOfExactType<TextField>()
+                          ?.controller;
+                      final comment = commentController?.text;
+                      if (comment != null && comment.isNotEmpty) {
+                        final userId =
+                            await SecureStorageService().readUserId();
+                        context.read<CommentBloc>().add(AddComment(
+                              userId: userId,
+                              content: comment,
+                            ));
+// Clear the text field
+                        commentController?.clear();
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: commentChild(filedata),
-          ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CustomCommentField(
-              labelText: 'Add a comment...',
-              errorText: 'no comment added',
-              sendButtonMethod: (commentText) {
-                setState(() {
-                  var value = {
-                    'name': 'Unknown',
-                    'message': commentText,
-                  };
-                  filedata.insert(0, value);
-                });
-              },
-            ),
-          ),
-        ],
-      ),
     );
-  }
-}
-
-class CustomCommentField extends StatefulWidget {
-  final String labelText;
-  final String errorText;
-  final Function(String) sendButtonMethod;
-
-  const CustomCommentField({
-    required this.labelText,
-    required this.errorText,
-    required this.sendButtonMethod,
-  });
-
-  @override
-  _CustomCommentFieldState createState() => _CustomCommentFieldState();
-}
-
-class _CustomCommentFieldState extends State<CustomCommentField> {
-  final TextEditingController commentController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: commentController,
-            decoration: InputDecoration(
-              labelText: widget.labelText,
-              border: const OutlineInputBorder(),
-            ),
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.send,
-              color: Colors.blue), // Set icon color to blue
-          onPressed: () {
-            if (commentController.text.trim().isNotEmpty) {
-              widget.sendButtonMethod(commentController.text);
-              commentController.clear();
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(widget.errorText),
-                ),
-              );
-            }
-          },
-        ),
-      ],
-    );
-  }
-
-  @override
-  void dispose() {
-    commentController.dispose();
-    super.dispose();
   }
 }

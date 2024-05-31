@@ -292,10 +292,19 @@ class MockSecureStorageService extends _i1.Mock
   }
 
   @override
-  _i3.Future<void> writeToken(String? token) => (super.noSuchMethod(
+  _i3.Future<void> writeTokenRolesAndUserId(
+    String? token,
+    List<String>? roles,
+    String? userId,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #writeToken,
-          [token],
+          #writeTokenRolesAndUserId,
+          [
+            token,
+            roles,
+            userId,
+          ],
         ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
@@ -311,9 +320,27 @@ class MockSecureStorageService extends _i1.Mock
       ) as _i3.Future<String?>);
 
   @override
-  _i3.Future<void> deleteToken() => (super.noSuchMethod(
+  _i3.Future<List<String>?> readRoles() => (super.noSuchMethod(
         Invocation.method(
-          #deleteToken,
+          #readRoles,
+          [],
+        ),
+        returnValue: _i3.Future<List<String>?>.value(),
+      ) as _i3.Future<List<String>?>);
+
+  @override
+  _i3.Future<String?> readUserId() => (super.noSuchMethod(
+        Invocation.method(
+          #readUserId,
+          [],
+        ),
+        returnValue: _i3.Future<String?>.value(),
+      ) as _i3.Future<String?>);
+
+  @override
+  _i3.Future<void> deleteTokenRolesAndUserId() => (super.noSuchMethod(
+        Invocation.method(
+          #deleteTokenRolesAndUserId,
           [],
         ),
         returnValue: _i3.Future<void>.value(),

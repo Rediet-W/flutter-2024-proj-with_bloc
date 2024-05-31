@@ -12,7 +12,7 @@ import 'package:flutter_project/presentation/widgets/nav.dart';
 import 'package:flutter_project/presentation/screens/admin_screen/comment_admin.dart';
 import 'package:flutter_project/presentation/screens/admin_screen/adminDetail.dart';
 import 'package:flutter_project/post/model/post.dart';
-import 'package:mongo_dart/mongo_dart.dart';
+// import 'package:mongo_dart/mongo_dart.dart';
 
 final GoRouter router = GoRouter(
   routes: <RouteBase>[
@@ -32,9 +32,7 @@ final GoRouter router = GoRouter(
           path: 'comment',
           builder: (context, state) {
             final postId = state.extra as String?;
-            return CommentPage(
-              postId: postId != null ? ObjectId.parse(postId) : ObjectId(),
-            );
+            return CommentPage();
           },
         ),
         GoRoute(
@@ -65,13 +63,12 @@ final GoRouter router = GoRouter(
           path: 'profile',
           builder: (context, state) => ProfileTwo(),
         ),
-        // Uncomment and modify this route if you need a detail page
-        // GoRoute(
-        //   path: 'detail',
-        //   builder: (context, state) => ItemPage(
-        //     postId: '',
-        //   ),
-        // ),
+        GoRoute(
+          path: 'detail',
+          builder: (context, state) => ItemPage(
+            postId: '',
+          ),
+        ),
       ],
     ),
   ],

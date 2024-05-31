@@ -1,15 +1,13 @@
-import 'package:mongo_dart/mongo_dart.dart';
-
 class Comment {
-  final String postId;
-  final String userId;
+  final String? id;
+  final String? userId;
   final String content;
 
-  Comment({required this.postId, required this.userId, required this.content});
+  Comment({this.id, required this.userId, required this.content});
 
   factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
-      postId: json['postId'],
+      id: json['id'],
       userId: json['userId'],
       content: json['content'],
     );
@@ -17,7 +15,7 @@ class Comment {
 
   Map<String, dynamic> toJson() {
     return {
-      'postId': postId,
+      "id": id,
       'userId': userId,
       'content': content,
     };

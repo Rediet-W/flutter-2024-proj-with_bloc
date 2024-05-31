@@ -12,7 +12,7 @@ class CreatePost extends PostEvent {
   final String description;
   final String location;
   final String time;
-  final List<int>? pictureBuffer;
+  final Uint8List? pictureBuffer;
 
   CreatePost({
     required this.category,
@@ -52,4 +52,23 @@ class SubmitForm extends PostEvent {
   final String description;
   final Uint8List imageData;
   SubmitForm(this.location, this.time, this.description, this.imageData);
+}
+
+class DeletePost extends PostEvent {
+  final String postId;
+
+  DeletePost(this.postId);
+
+  @override
+  List<Object> get props => [postId];
+}
+
+class EditPost extends PostEvent {
+  final String postId;
+  final String content;
+
+  EditPost(this.postId, this.content);
+
+  @override
+  List<Object> get props => [postId, content];
 }

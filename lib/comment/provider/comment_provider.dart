@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_project/comment/repository/comment_repository.dart';
 
 class CommentProvider extends StatelessWidget {
@@ -12,10 +11,9 @@ class CommentProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final http.Client httpClient = http.Client();
     final CommentRepository commentRepository = CommentRepository(
       baseUrl: 'http://10.0.2.2:3003/',
-      httpClient: httpClient,
+      // httpClient: httpClient,
     );
 
     return MultiRepositoryProvider(
