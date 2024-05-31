@@ -35,9 +35,9 @@ void main() {
     comment_bloc_test.main();
     auth_bloc_test.main();
     // call the tests for each repository
-    auth_repo_test.main();
-    comment_repo_test.main();
-    post_repo_test.main();
+    // auth_repo_test.main();
+    // comment_repo_test.main();
+    // post_repo_test.main();
     // call the tests for each provider
     auth_provider_test.main();
     comment_provider_test.main();

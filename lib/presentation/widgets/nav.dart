@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter_project/presentation/screens/create_post_page.dart';
 import 'package:flutter_project/presentation/screens/profile.dart';
@@ -16,6 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: Key('homeScreen'),
       body: widgetList[myindex],
       bottomNavigationBar: BottomNavigationBar(
           selectedItemColor: Colors.blue,

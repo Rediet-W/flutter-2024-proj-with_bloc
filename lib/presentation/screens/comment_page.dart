@@ -52,6 +52,7 @@ class CommentPage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextField(
+                      key: Key('commentField'),
                       decoration: InputDecoration(
                         labelText: 'Add a comment...',
                       ),
