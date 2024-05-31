@@ -5,12 +5,17 @@ import '../model/comment.dart';
 
 class CommentRepository {
   final String baseUrl;
+  final http.Client httpClient;
 
-  CommentRepository({required this.baseUrl});
+  CommentRepository(
+      {required this.baseUrl,
+      http.Client? client,
+      required http.Client httpClient})
+      : httpClient = client ?? http.Client();
 
   Future<List<Comment>> fetchComments(String postId) async {
     final response =
-        await http.get(Uri.parse('$baseUrl/comments?postId=$postId'));
+        await httpClient.get(Uri.parse('$baseUrl/comments?postId=$postId'));
 
     if (response.statusCode == 200) {
       List<dynamic> body = json.decode(response.body);
@@ -21,7 +26,7 @@ class CommentRepository {
   }
 
   Future<Comment> addComment(Comment comment) async {
-    final response = await http.post(
+    final response = await httpClient.post(
       Uri.parse('$baseUrl/comments'),
       headers: {"Content-Type": "application/json"},
       body: json.encode(comment.toJson()),

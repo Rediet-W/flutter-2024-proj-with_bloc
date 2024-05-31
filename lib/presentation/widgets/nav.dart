@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:flutter_project/post/screens/create_post_page.dart';
+import 'package:flutter_project/presentation/screens/create_post_page.dart';
 import 'package:flutter_project/presentation/screens/profile.dart';
 import 'package:flutter_project/presentation/screens/withaccount.dart';
 

@@ -5,10 +5,13 @@ import '../../secure_storage_service.dart';
 
 class PostRepository {
   final String baseUrl;
-
+  final http.Client client;
   final SecureStorageService _secureStorageService = SecureStorageService();
 
-  PostRepository({required this.baseUrl});
+  PostRepository(
+      {required this.baseUrl,
+      required this.client,
+      required http.Client httpClient});
 
   Future<void> createPost({
     required String title,
@@ -17,7 +20,7 @@ class PostRepository {
     required String time,
   }) async {
     final url = Uri.parse('$baseUrl/items');
-    final response = await http.post(
+    final response = await client.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
@@ -35,7 +38,7 @@ class PostRepository {
 
   Future<Map<String, dynamic>> fetchPostDetails(String postId) async {
     final url = Uri.parse('$baseUrl/items/$postId');
-    final response = await http.get(url);
+    final response = await client.get(url);
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -45,11 +48,9 @@ class PostRepository {
   }
 
   Future<List<Post>> fetchPosts() async {
-    final response = await http.get(
-      Uri.parse('http://localhost:3003/items'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    final response = await client.get(
+      Uri.parse('$baseUrl/items'),
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {

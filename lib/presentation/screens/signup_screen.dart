@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../bloc/auth_bloc.dart';
-import '../bloc/auth_event.dart';
-import '../bloc/auth_state.dart';
+import '../../auth/bloc/auth_bloc.dart';
+import '../../auth/bloc/auth_event.dart';
+import '../../auth/bloc/auth_state.dart';
 
-class LogInPage extends StatelessWidget {
+class SignUpPage extends StatelessWidget {
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -33,11 +34,18 @@ class LogInPage extends StatelessWidget {
                 margin: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    const Text("Log In",
+                    const Text("Sign Up",
                         style: TextStyle(
                             fontSize: 40.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.black)),
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
+                        prefixIcon: Icon(Icons.person),
+                      ),
+                    ),
                     TextFormField(
                       controller: _emailController,
                       decoration: const InputDecoration(
@@ -56,10 +64,10 @@ class LogInPage extends StatelessWidget {
                     const SizedBox(height: 16.0),
                     GestureDetector(
                       onTap: () {
-                        context.go('/signup');
+                        context.go('/login');
                       },
                       child: const Text(
-                        'I do not have an account',
+                        'I already have an account',
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           color: Colors.blue,
@@ -75,14 +83,15 @@ class LogInPage extends StatelessWidget {
                       ),
                       onPressed: () {
                         context.read<AuthBloc>().add(
-                              LoginEvent(
+                              SignupEvent(
+                                username: _usernameController.text,
                                 email: _emailController.text,
                                 password: _passwordController.text,
                               ),
                             );
                       },
                       child: const Text(
-                        'Log In',
+                        'Sign Up',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

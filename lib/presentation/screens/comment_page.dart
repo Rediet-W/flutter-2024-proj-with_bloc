@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/comment_bloc.dart';
-import '../bloc/comment_event.dart';
-import '../bloc/comment_state.dart';
-import '../repository/comment_repository.dart';
+import '../../comment/bloc/comment_bloc.dart';
+import '../../comment/bloc/comment_event.dart';
+import '../../comment/bloc/comment_state.dart';
+import '../../comment/repository/comment_repository.dart';
 
 class CommentPage extends StatelessWidget {
   final String postId;

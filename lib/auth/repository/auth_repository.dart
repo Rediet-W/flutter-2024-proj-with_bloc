@@ -4,12 +4,19 @@ import 'package:flutter_project/auth/model/user.dart';
 import '../../secure_storage_service.dart'; // Make sure to import the SecureStorageService
 
 class AuthRepository {
-  final String baseUrl = 'http://localhost:3003/auth';
-  final SecureStorageService _secureStorageService = SecureStorageService();
+  final String baseUrl;
+  final http.Client httpClient;
+  final SecureStorageService secureStorageService;
+
+  AuthRepository({
+    required this.baseUrl,
+    required this.httpClient,
+    required this.secureStorageService,
+  });
 
   // log in
   Future<User> login(String email, String password) async {
-    final response = await http.post(
+    final response = await httpClient.post(
       Uri.parse('$baseUrl/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -22,7 +29,7 @@ class AuthRepository {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      await _secureStorageService.writeToken(data['token']);
+      await secureStorageService.writeToken(data['token']);
       return User(
           id: data['id'], email: data['email'], username: data['username']);
     } else {
@@ -31,7 +38,7 @@ class AuthRepository {
   }
 
   Future<User> signup(String username, String email, String password) async {
-    final response = await http.post(
+    final response = await httpClient.post(
       Uri.parse('$baseUrl/signup'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -45,7 +52,7 @@ class AuthRepository {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      await _secureStorageService.writeToken(data['token']);
+      await secureStorageService.writeToken(data['token']);
       return User(
           id: data['id'], email: data['email'], username: data['username']);
     } else {
@@ -54,12 +61,12 @@ class AuthRepository {
   }
 
   Future<void> logout() async {
-    final token = await _secureStorageService.readToken();
+    final token = await secureStorageService.readToken();
     if (token == null) {
       throw Exception('No token found, please log in first');
     }
 
-    final response = await http.post(
+    final response = await httpClient.post(
       Uri.parse('$baseUrl/logout'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -68,7 +75,7 @@ class AuthRepository {
     );
 
     if (response.statusCode == 200) {
-      await _secureStorageService.deleteToken();
+      await secureStorageService.deleteToken();
     } else {
       throw Exception('Failed to log out');
     }
@@ -76,7 +83,7 @@ class AuthRepository {
 
   // Method to get headers with token
   Future<Map<String, String>> _getHeaders() async {
-    final token = await _secureStorageService.readToken();
+    final token = await secureStorageService.readToken();
     if (token == null) {
       throw Exception('No token found, please log in first');
     }
@@ -88,7 +95,7 @@ class AuthRepository {
 
   // Example of another authenticated request
   Future<User> getUserDetails() async {
-    final response = await http.get(
+    final response = await httpClient.get(
       Uri.parse('$baseUrl/user/details'),
       headers: await _getHeaders(),
     );

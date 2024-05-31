@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_project/auth/screens/login_screen.dart';
-import 'package:flutter_project/auth/screens/signup_screen.dart';
-import 'package:flutter_project/comment/screens/comment_page.dart';
-import 'package:flutter_project/post/screens/create_post_page.dart';
+import 'package:flutter_project/presentation/screens/login_screen.dart';
+import 'package:flutter_project/presentation/screens/signup_screen.dart';
+import 'package:flutter_project/presentation/screens/comment_page.dart';
+import 'package:flutter_project/presentation/screens/create_post_page.dart';
 import 'package:flutter_project/presentation/screens/detailpage.dart';
 import 'package:flutter_project/presentation/screens/noaccount.dart';
 import 'package:flutter_project/presentation/screens/profile.dart';
