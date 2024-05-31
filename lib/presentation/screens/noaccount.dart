@@ -78,8 +78,9 @@ class GridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Uint8List? imageData =
-        post.imageBuffer != null ? Uint8List.fromList(post.imageBuffer!) : null;
+    Uint8List? imageData = post.pictureBuffer != null
+        ? Uint8List.fromList(post.pictureBuffer!)
+        : null;
 
     return Card(
       color: Colors.white,

@@ -19,20 +19,19 @@ class AuthRepository {
       }),
     );
 
-    print('Login response status: ${response.statusCode}');
-    print('Login response body: ${response.body}');
-
     if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
       final token = data['token'];
       final roles = List<String>.from(data['roles'] ?? []);
-      if (token == null || roles.isEmpty) {
-        throw Exception('Token or roles missing in response');
+      final userId = data['id']; // Assuming the response contains userId
+      if (token == null || roles.isEmpty || userId == null) {
+        throw Exception('Token, roles, or userId missing in response');
       }
-      await _secureStorageService.writeTokenAndRoles(token, roles);
+      await _secureStorageService.writeTokenRolesAndUserId(
+          token, roles, userId);
 
       return User(
-        id: data['id'] ?? '', // Provide default values if null
+        id: userId,
         email: data['email'] ?? '',
         username: data['username'] ?? '',
         roles: roles,
@@ -56,20 +55,19 @@ class AuthRepository {
       }),
     );
 
-    print('Signup response status: ${response.statusCode}');
-    print('Signup response body: ${response.body}');
-
     if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
       final token = data['token'];
       final roles = List<String>.from(data['roles'] ?? []);
-      if (token == null || roles.isEmpty) {
-        throw Exception('Token or roles missing in response');
+      final userId = data['userId']; // Assuming the response contains userId
+      if (token == null || roles.isEmpty || userId == null) {
+        throw Exception('Token, roles, or userId missing in response');
       }
-      await _secureStorageService.writeTokenAndRoles(token, roles);
+      await _secureStorageService.writeTokenRolesAndUserId(
+          token, roles, userId);
 
       return User(
-        id: data['id'] ?? '', // Provide default values if null
+        id: userId,
         email: data['email'] ?? '',
         username: data['username'] ?? '',
         roles: roles,
@@ -81,27 +79,6 @@ class AuthRepository {
   }
 
   Future<void> logout() async {
-    final token = await _secureStorageService.readToken();
-    if (token == null) {
-      throw Exception('No token found, please log in first');
-    }
-
-    final response = await http.post(
-      Uri.parse('$baseUrl/logout'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    print('Logout response status: ${response.statusCode}');
-    print('Logout response body: ${response.body}');
-
-    if (response.statusCode == 200 || response.statusCode == 204) {
-      await _secureStorageService.deleteTokenAndRoles();
-    } else {
-      throw Exception(
-          'Failed to log out: ${response.statusCode} ${response.reasonPhrase}');
-    }
+    await _secureStorageService.deleteTokenRolesAndUserId();
   }
 }

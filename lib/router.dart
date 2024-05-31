@@ -11,12 +11,14 @@ import 'package:flutter_project/presentation/screens/withaccount.dart';
 import 'package:flutter_project/presentation/widgets/nav.dart';
 import 'package:flutter_project/presentation/screens/admin_screen/comment_admin.dart';
 import 'package:flutter_project/presentation/screens/admin_screen/adminDetail.dart';
+import 'package:flutter_project/post/model/post.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 final GoRouter router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/',
-      builder: (BuildContext context, GoRouterState state) =>  NoAccount(),
+      builder: (BuildContext context, GoRouterState state) => NoAccount(),
       routes: <RouteBase>[
         GoRoute(
           path: 'login',
@@ -28,7 +30,12 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: 'comment',
-          builder: (context, state) => CommentPage(postId: 'postId'),
+          builder: (context, state) {
+            final postId = state.extra as String?;
+            return CommentPage(
+              postId: postId != null ? ObjectId.parse(postId) : ObjectId(),
+            );
+          },
         ),
         GoRoute(
           path: 'home',
@@ -58,6 +65,7 @@ final GoRouter router = GoRouter(
           path: 'profile',
           builder: (context, state) => ProfileTwo(),
         ),
+        // Uncomment and modify this route if you need a detail page
         // GoRoute(
         //   path: 'detail',
         //   builder: (context, state) => ItemPage(

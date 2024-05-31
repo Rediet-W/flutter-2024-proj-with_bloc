@@ -1,11 +1,14 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 class SecureStorageService {
   final FlutterSecureStorage _storage = FlutterSecureStorage();
 
-  Future<void> writeTokenAndRoles(String token, List<String> roles) async {
+  Future<void> writeTokenRolesAndUserId(
+      String token, List<String> roles, String userId) async {
     await _storage.write(key: 'token', value: token);
     await _storage.write(key: 'roles', value: roles.join(','));
+    await _storage.write(key: 'userId', value: userId);
   }
 
   Future<String?> readToken() async {
@@ -17,8 +20,13 @@ class SecureStorageService {
     return roles?.split(',');
   }
 
-  Future<void> deleteTokenAndRoles() async {
+  Future<String?> readUserId() async {
+    return await _storage.read(key: 'userId');
+  }
+
+  Future<void> deleteTokenRolesAndUserId() async {
     await _storage.delete(key: 'token');
     await _storage.delete(key: 'roles');
+    await _storage.delete(key: 'userId');
   }
 }

@@ -3,9 +3,12 @@ import '../repository/comment_repository.dart';
 import 'comment_event.dart';
 import 'comment_state.dart';
 import '../model/comment.dart';
+import 'package:mongo_dart/mongo_dart.dart';
+import '../../secure_storage_service.dart';
 
 class CommentBloc extends Bloc<CommentEvent, CommentState> {
   final CommentRepository commentRepository;
+  final SecureStorageService _secureStorageService = SecureStorageService();
 
   CommentBloc({required this.commentRepository}) : super(CommentInitial()) {
     on<LoadComments>((event, emit) async {
@@ -24,11 +27,9 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
 
       try {
         final newComment = Comment(
-          id: '', // Server-generated ID
           postId: event.postId,
           userId: event.userId,
           content: event.content,
-          timestamp: DateTime.now(),
         );
         final comment = await commentRepository.addComment(newComment);
         final currentState = state;
@@ -41,5 +42,13 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         emit(CommentError('Failed to add comment'));
       }
     });
+  }
+
+  Future<String> getUserId() async {
+    final userId = await _secureStorageService.readToken();
+    if (userId == null) {
+      throw Exception('User ID not found in secure storage');
+    }
+    return userId;
   }
 }

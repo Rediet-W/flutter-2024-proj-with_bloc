@@ -1,106 +1,133 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
-class LostFoundForm extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+
+class LostFoundForm extends StatefulWidget {
+  @override
+  _LostFoundFormState createState() => _LostFoundFormState();
+}
+
+class _LostFoundFormState extends State<LostFoundForm> {
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  Uint8List? _selectedImage;
+
+  Future<void> _postItem(Uint8List? imageData) async {
+    if (_titleController.text.isEmpty ||
+        _descriptionController.text.isEmpty ||
+        _locationController.text.isEmpty ||
+        _timeController.text.isEmpty ||
+        imageData == null ||
+        imageData.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Please fill in all fields and attach an image.')));
+      return;
+    }
+
+    try {
+      final url = Uri.parse('http://localhost:3003/items');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'category': _titleController.text,
+          'description': _descriptionController.text,
+          'location': _locationController.text,
+          'time': _timeController.text,
+          'picture': base64Encode(
+              imageData), // Convert Uint8List to base64 string for sending
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Post created successfully.')));
+        _titleController.clear();
+        _locationController.clear();
+        _timeController.clear();
+        _descriptionController.clear();
+        setState(() {
+          _selectedImage = null;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Failed to create post: ${response.reasonPhrase}')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to create post: $e')));
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final imagePicker = ImagePicker();
+    final pickedImage =
+        await imagePicker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      final pickedImageData = await pickedImage.readAsBytes();
+      setState(() {
+        _selectedImage = pickedImageData;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.blue[300],
-          title: Center(
-            child: Text(
-              'create post',
-              style: TextStyle(color: Colors.white),
+      appBar: AppBar(
+        title: Text('Create Post'),
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextFormField(
+              controller: _titleController,
+              decoration: InputDecoration(labelText: 'Title'),
             ),
-          ),
+            SizedBox(height: 16),
+            TextFormField(
+              controller: _locationController,
+              decoration: InputDecoration(labelText: 'Location'),
+            ),
+            SizedBox(height: 16),
+            TextFormField(
+              controller: _timeController,
+              decoration: InputDecoration(labelText: 'Time'),
+            ),
+            SizedBox(height: 16),
+            TextFormField(
+              controller: _descriptionController,
+              maxLines: 3,
+              decoration: InputDecoration(labelText: 'Description'),
+            ),
+            SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: _pickImage,
+              icon: Icon(Icons.attach_file),
+              label: Text('Attach Image'),
+            ),
+            SizedBox(height: 16),
+            if (_selectedImage != null)
+              Image.memory(
+                _selectedImage!,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => _postItem(_selectedImage),
+              child: Text('Post'),
+            ),
+          ],
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(27),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  height: 44,
-                  child: TextFormField(
-                    maxLines: 2,
-                    decoration: InputDecoration(
-                      labelText: 'Location',
-                      labelStyle: TextStyle(color: Colors.black45),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      fillColor: Colors.grey[900],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                Container(
-                  height: 44,
-                  child: TextFormField(
-                    maxLines: 2,
-                    decoration: InputDecoration(
-                      labelText: 'Time:',
-                      labelStyle: TextStyle(color: Colors.black45),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                TextFormField(
-                  maxLines: 7,
-                  decoration: InputDecoration(
-                    labelText: 'Description',
-                    alignLabelWithHint: true,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                AttachImageButton(),
-                SizedBox(
-                  height: 30,
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text('Post'),
-                  style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.blue[400],
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 7, vertical: 20),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15))),
-                ),
-              ],
-            ),
-          ),
-        ));
-  }
-}
-
-class AttachImageButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      onPressed: () {},
-      icon: Icon(Icons.add),
-      label: Text('Attach an image'),
-      style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.blue,
-          side: BorderSide(
-            width: 1.0,
-            color: Colors.blue,
-          ),
-          padding: EdgeInsets.all(30),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+      ),
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_project/post/bloc/post_event.dart';
 import 'package:flutter_project/post/bloc/post_state.dart';
 import 'package:flutter_project/post/repository/post_repository.dart';
 import 'package:flutter_project/post/model/post.dart';
+import 'package:flutter_project/comment/screens/comment_page.dart'; // Import CommentPage
 
 class WithAccount extends StatelessWidget {
   @override
@@ -58,6 +58,9 @@ class WithAccount extends StatelessWidget {
                     final post = state.posts[index];
                     return GridItem(
                       post: post,
+                      navigateToComment: (postId) {
+                        context.go('/comment?postId=$postId');
+                      },
                     );
                   }),
                 ),
@@ -85,13 +88,15 @@ class WithAccount extends StatelessWidget {
 
 class GridItem extends StatelessWidget {
   final Post post;
+  final Function(String? postId) navigateToComment;
 
-  GridItem({required this.post});
+  GridItem({required this.post, required this.navigateToComment});
 
   @override
   Widget build(BuildContext context) {
-    Uint8List? imageData =
-        post.imageBuffer != null ? Uint8List.fromList(post.imageBuffer!) : null;
+    Uint8List? imageData = post.pictureBuffer != null
+        ? Uint8List.fromList(post.pictureBuffer!)
+        : null;
 
     return Card(
       color: Colors.white,
@@ -130,7 +135,8 @@ class GridItem extends StatelessWidget {
               ),
               IconButton(
                 onPressed: () {
-                  context.go('/comments'); // Changed from '/login'
+                  navigateToComment(
+                      post.id); // Pass postId to navigateToComment
                 },
                 icon: Icon(Icons.comment), // Changed from Icons.comment_rounded
                 color: Colors.blue,

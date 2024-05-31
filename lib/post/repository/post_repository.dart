@@ -1,33 +1,42 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import '../model/post.dart';
 import '../../secure_storage_service.dart';
+import 'dart:io';
 
 class PostRepository {
   final String baseUrl;
-
   final SecureStorageService _secureStorageService = SecureStorageService();
 
   PostRepository({required this.baseUrl});
 
   Future<void> createPost({
-    required String title,
+    required String category,
     required String description,
     required String location,
     required String time,
+    List<int>? pictureBuffer,
   }) async {
+    final token = await _secureStorageService.readToken();
     final url = Uri.parse('$baseUrl/items');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'title': title,
-        'description': description,
-        'location': location,
-        'time': time,
-      }),
-    );
+    var request = http.MultipartRequest('POST', url);
+    request.headers['Authorization'] = 'Bearer $token';
+    request.fields['category'] = category;
+    request.fields['description'] = description;
+    request.fields['location'] = location;
+    request.fields['time'] = time;
 
+    if (pictureBuffer != null) {
+      request.files.add(http.MultipartFile.fromBytes(
+        'picture',
+        Uint8List.fromList(pictureBuffer),
+        filename: 'image.jpg', // Provide a filename here
+        // contentType: MediaType('image', 'jpg'),
+      ));
+    }
+
+    final response = await request.send();
     if (response.statusCode != 201) {
       throw Exception('Failed to create post');
     }

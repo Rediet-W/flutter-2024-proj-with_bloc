@@ -11,7 +11,7 @@ import 'comment/bloc/comment_bloc.dart';
 void main() {
   final AuthRepository authRepository = AuthRepository();
   final CommentRepository commentRepository =
-      CommentRepository(baseUrl: 'http://10.0.2.2:3003/');
+      CommentRepository(baseUrl: 'http://localhost:3003');
   final PostRepository postRepository =
       PostRepository(baseUrl: 'http://localhost:3003/');
 

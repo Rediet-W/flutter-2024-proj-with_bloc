@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 abstract class CommentEvent extends Equatable {
   const CommentEvent();
@@ -10,7 +11,7 @@ abstract class CommentEvent extends Equatable {
 class LoadComments extends CommentEvent {
   final String postId;
 
-  const LoadComments(this.postId);
+  LoadComments(ObjectId postId) : postId = postId.$oid;
 
   @override
   List<Object> get props => [postId];
@@ -21,11 +22,12 @@ class AddComment extends CommentEvent {
   final String userId;
   final String content;
 
-  const AddComment({
-    required this.postId,
-    required this.userId,
+  AddComment({
+    required postId,
+    required userId,
     required this.content,
-  });
+  })  : postId = postId,
+        userId = userId;
 
   @override
   List<Object> get props => [postId, userId, content];

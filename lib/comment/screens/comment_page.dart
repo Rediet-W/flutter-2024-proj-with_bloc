@@ -4,9 +4,11 @@ import '../bloc/comment_bloc.dart';
 import '../bloc/comment_event.dart';
 import '../bloc/comment_state.dart';
 import '../repository/comment_repository.dart';
+import '../../secure_storage_service.dart'; // Import SecureStorageService
+import 'package:mongo_dart/mongo_dart.dart';
 
 class CommentPage extends StatelessWidget {
-  final String postId;
+  final ObjectId postId;
 
   CommentPage({required this.postId});
 
@@ -26,7 +28,7 @@ class CommentPage extends StatelessWidget {
               child: BlocBuilder<CommentBloc, CommentState>(
                 builder: (context, state) {
                   if (state is CommentsLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return Container(child: CircularProgressIndicator());
                   } else if (state is CommentsLoaded) {
                     return ListView.builder(
                       itemCount: state.comments.length,
@@ -37,9 +39,9 @@ class CommentPage extends StatelessWidget {
                       },
                     );
                   } else if (state is CommentError) {
-                    return Center(child: Text(state.message));
+                    return Container(child: Text(state.message));
                   } else {
-                    return Center(child: Text('No comments found'));
+                    return Container(child: Text('No comments found'));
                   }
                 },
               ),
@@ -53,12 +55,13 @@ class CommentPage extends StatelessWidget {
                       decoration: InputDecoration(
                         labelText: 'Add a comment...',
                       ),
-                      onSubmitted: (comment) {
+                      onSubmitted: (comment) async {
                         if (comment.isNotEmpty) {
+                          final userId =
+                              await SecureStorageService().readUserId();
                           context.read<CommentBloc>().add(AddComment(
                                 postId: postId,
-                                userId:
-                                    'currentUserId', // Replace with actual user ID
+                                userId: userId,
                                 content: comment,
                               ));
                         }
@@ -67,23 +70,21 @@ class CommentPage extends StatelessWidget {
                   ),
                   IconButton(
                     icon: Icon(Icons.send),
-                    onPressed: () {
-                      final comment = (context as Element)
+                    onPressed: () async {
+                      final commentController = (context as Element)
                           .findAncestorWidgetOfExactType<TextField>()
-                          ?.controller
-                          ?.text;
+                          ?.controller;
+                      final comment = commentController?.text;
                       if (comment != null && comment.isNotEmpty) {
+                        final userId =
+                            await SecureStorageService().readUserId();
                         context.read<CommentBloc>().add(AddComment(
                               postId: postId,
-                              userId:
-                                  'currentUserId', // Replace with actual user ID
+                              userId: userId,
                               content: comment,
                             ));
                         // Clear the text field
-                        (context as Element)
-                            .findAncestorWidgetOfExactType<TextField>()
-                            ?.controller
-                            ?.clear();
+                        commentController?.clear();
                       }
                     },
                   ),

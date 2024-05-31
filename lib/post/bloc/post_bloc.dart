@@ -16,10 +16,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     emit(PostLoading());
     try {
       await postRepository.createPost(
-        title: event.title,
+        category: event.category,
         description: event.description,
         location: event.location,
         time: event.time,
+        pictureBuffer: event.pictureBuffer,
       );
       emit(PostSuccess());
     } catch (e) {
@@ -30,8 +31,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   void _onLoadPost(LoadPost event, Emitter<PostState> emit) async {
     emit(PostLoading());
     try {
-      final List<Post> posts = await postRepository
-          .fetchPosts(); // Assuming fetchPosts returns a List<Post>
+      final List<Post> posts = await postRepository.fetchPosts();
       emit(PostLoaded(posts));
     } catch (e) {
       emit(PostLoadingDetailsError(error: e.toString()));

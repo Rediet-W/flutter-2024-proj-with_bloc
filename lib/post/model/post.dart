@@ -1,27 +1,30 @@
 import 'dart:typed_data';
+import 'package:mongo_dart/mongo_dart.dart';
 
 class Post {
-  final String title;
+  final String? id;
+  final String category;
   final String description;
   final String location;
   final String time;
-  final Uint8List? imageBuffer;
+  final Uint8List? pictureBuffer;
 
   Post({
-    required this.title,
+    this.id,
+    required this.category,
     required this.description,
     required this.location,
     required this.time,
-    this.imageBuffer,
+    this.pictureBuffer,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-      title: json['title'] ?? 'No title',
+      category: json[' category'] ?? 'No  category',
       description: json['description'] ?? 'No description',
       location: json['location'] ?? 'No location',
       time: json['time'] ?? 'No time',
-      imageBuffer: json['picture'] != null
+      pictureBuffer: json['picture'] != null
           ? Uint8List.fromList(List<int>.from(json['picture']['data']))
           : null,
     );
@@ -29,11 +32,11 @@ class Post {
 
   Map<String, dynamic> toJson() {
     return {
-      'title': title,
+      'category': category,
       'description': description,
       'location': location,
       'time': time,
-      'imageBuffer': imageBuffer,
+      'pictureBuffer': pictureBuffer,
     };
   }
 }
