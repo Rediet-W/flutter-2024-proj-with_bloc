@@ -7,7 +7,6 @@ import 'package:flutter_project/post/bloc/post_event.dart';
 import 'package:flutter_project/post/bloc/post_state.dart';
 import 'package:flutter_project/post/repository/post_repository.dart';
 import 'package:flutter_project/post/model/post.dart';
-import 'package:flutter_project/comment/screens/comment_page.dart'; // Import CommentPage
 
 class WithAccount extends StatelessWidget {
   @override

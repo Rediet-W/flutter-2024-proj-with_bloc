@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -8,8 +9,10 @@ import 'package:flutter_project/post/bloc/post_event.dart';
 import 'package:flutter_project/post/bloc/post_state.dart';
 import 'package:flutter_project/post/repository/post_repository.dart';
 import 'package:flutter_project/post/model/post.dart';
+import 'package:http/http.dart' as http;
 
 class NoAccount extends StatelessWidget {
+  final http.Client httpClient = http.Client();
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

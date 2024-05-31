@@ -39,4 +39,38 @@ class Post {
       'pictureBuffer': pictureBuffer,
     };
   }
+
+//   @override
+//   bool operator ==(Object other) {
+//     if (identical(this, other)) return true;
+//     if (runtimeType != other.runtimeType) return false;
+//     final Post otherPost = other as Post;
+//     return title == otherPost.title &&
+//         description == otherPost.description &&
+//         location == otherPost.location &&
+//         time == otherPost.time &&
+//         (imageBuffer == otherPost.imageBuffer ||
+//             (imageBuffer != null &&
+//                 otherPost.imageBuffer != null &&
+//                 imageBuffer!.length == otherPost.imageBuffer!.length &&
+//                 _compareUint8Lists(imageBuffer!, otherPost.imageBuffer!)));
+//   }
+
+//   @override
+//   int get hashCode {
+//     return title.hashCode ^
+//         description.hashCode ^
+//         location.hashCode ^
+//         time.hashCode ^
+//         (imageBuffer?.hashCode ?? 0);
+//   }
+
+//   bool _compareUint8Lists(Uint8List list1, Uint8List list2) {
+//     for (int i = 0; i < list1.length; i++) {
+//       if (list1[i] != list2[i]) {
+//         return false;
+//       }
+//     }
+//     return true;
+//   }
 }

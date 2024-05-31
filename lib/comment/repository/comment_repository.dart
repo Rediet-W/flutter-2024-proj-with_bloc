@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import '../model/comment.dart';
-import 'package:mongo_dart/mongo_dart.dart';
 
 class CommentRepository {
   final String baseUrl;
@@ -13,8 +13,8 @@ class CommentRepository {
         await http.get(Uri.parse('$baseUrl/comments?postId=$postId'));
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((json) => Comment.fromJson(json)).toList();
+      List<dynamic> body = json.decode(response.body);
+      return body.map((dynamic item) => Comment.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load comments');
     }
@@ -23,12 +23,12 @@ class CommentRepository {
   Future<Comment> addComment(Comment comment) async {
     final response = await http.post(
       Uri.parse('$baseUrl/comments'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(comment.toJson()),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(comment.toJson()),
     );
 
     if (response.statusCode == 201) {
-      return Comment.fromJson(jsonDecode(response.body));
+      return Comment.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to add comment');
     }
