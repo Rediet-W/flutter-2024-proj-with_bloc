@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { RolesGuard } from './auth/roles/role.guard';
 import { ItemsModule } from './items/items.module';
 import { UserModule } from './user/user.module';
+import { CommentModule } from './comments/comment.module';
 
 
 @Module({
@@ -19,7 +20,7 @@ import { UserModule } from './user/user.module';
     MongooseModule.forRoot(process.env.DB_URL),
     UserModule,
     ItemsModule,
-    AuthModule],
+    AuthModule,CommentModule],
     
   controllers: [AppController],
   providers: [AppService,{
